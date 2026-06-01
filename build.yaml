@@ -1,0 +1,15 @@
+---
+# keyboard firmware
+include:
+  - board: zitaotech_keypoint_left
+    shield: lpm_view;left_bbtrackpad_keypoint
+
+  - board: zitaotech_keypoint_right
+    shield: lpm_view;right_trackpoint_keypoint
+
+
+# rest firmware
+  - board: zitaotech_keypoint_left
+    shield: lpm_view;left_bbtrackball;settings_reset
+  - board: zitaotech_keypoint_right
+    shield: lpm_view;left_bbtrackpad;settings_reset
