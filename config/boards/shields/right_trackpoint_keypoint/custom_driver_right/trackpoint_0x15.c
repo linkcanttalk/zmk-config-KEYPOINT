@@ -38,14 +38,14 @@ K_THREAD_STACK_DEFINE(tp_workq_stack, TP_WORKQ_STACK_SIZE);
 static struct k_work_q tp_workq;
 
 /* ========================================================================= */
-/* 鼠标与滚轮可调参数 (已映射至 Kconfig，用户可在 .conf 中配置)                 */
+/* Mouse and scroll setting              */
 /* ========================================================================= */
 
-// --- 滚轮方向配置 ---
+// --- Scroll direction ---
 #define SCROLL_X_DIR (-CONFIG_TRACKPOINT_SCROLL_X_DIR)
 #define SCROLL_Y_DIR CONFIG_TRACKPOINT_SCROLL_Y_DIR
 
-// --- 滚轮灵敏度与粒度配置 ---
+// --- Scroll sensitivity ---
 #define SCROLL_DEADZONE CONFIG_TRACKPOINT_SCROLL_DEADZONE
 #define SCROLL_INPUT_MAX CONFIG_TRACKPOINT_SCROLL_INPUT_MAX
 #define SCROLL_DIVISOR_SLOW CONFIG_TRACKPOINT_SCROLL_DIVISOR_SLOW
@@ -57,11 +57,10 @@ static struct k_work_q tp_workq;
 #define ARROW_DIVISOR_SLOW CONFIG_TRACKPOINT_SCROLL_DIVISOR_SLOW
 #define ARROW_DIVISOR_FAST CONFIG_TRACKPOINT_SCROLL_DIVISOR_FAST
 
-// --- 防误触锁定比例配置 ---
 #define DOMINANT_NUMERATOR CONFIG_TRACKPOINT_DOMINANT_NUMERATOR
 #define DOMINANT_DENOMINATOR CONFIG_TRACKPOINT_DOMINANT_DENOMINATOR
 
-// --- 鼠标指针基础配置 (Kconfig 为整数百分比，这里除以 100 转为浮点数) ---
+// --- Mouse base setting  ---
 #define MOUSE_BASE_SPEED (CONFIG_TRACKPOINT_MOUSE_BASE_SPEED_PERCENT / 100.0f)
 #define MOUSE_SENS_BASE (CONFIG_TRACKPOINT_MOUSE_SENS_BASE_PERCENT / 100.0f)
 #define MOUSE_SENS_STEP (CONFIG_TRACKPOINT_MOUSE_SENS_STEP_PERCENT / 100.0f)
@@ -109,7 +108,7 @@ static int hid_indicators_listener(const zmk_event_t *eh) {
 ZMK_LISTENER(a320_hid_listener, hid_indicators_listener);
 ZMK_SUBSCRIPTION(a320_hid_listener, zmk_hid_indicators_changed);
 
-/* ========= Space + Slow 按键监听 ========= */
+/* ========= Space + Slow key listener ========= */
 static int special_key_listener_cb(const zmk_event_t *eh) {
     const struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
     if (!ev)
@@ -145,7 +144,7 @@ struct trackpoint_data {
     const struct device *dev;
     struct k_work work;
     struct gpio_callback motion_cb_data;
-    struct k_work_delayable enable_irq_work; // ⭐ 新增
+    struct k_work_delayable enable_irq_work; 
     uint32_t last_packet_time;
     int16_t scroll_residue_x;
     int16_t scroll_residue_y;
@@ -153,7 +152,7 @@ struct trackpoint_data {
     int16_t arrow_residue_y;
 };
 
-/* ========= 指数加速计算 ========= */
+/* ========= EXPONENTIAL caculate ========= */
 #ifdef CONFIG_TRACKPOINT_EXPONENTIAL
 #define TP_MAX_MULT 2.0f
 static inline float trackpoint_exponential_factor(int8_t dx, int8_t dy, uint32_t delta_ms) {
@@ -171,7 +170,7 @@ static inline float trackpoint_exponential_factor(int8_t dx, int8_t dy, uint32_t
 }
 #endif
 
-/* ========= 读取数据 ========= */
+/* ========= Read data ========= */
 static int trackpoint_read_packet(const struct device *dev, int8_t *dx, int8_t *dy) {
     const struct trackpoint_config *cfg = dev->config;
     uint8_t buf[TRACKPOINT_PACKET_LEN] = {0};
@@ -195,12 +194,11 @@ static int trackpoint_read_packet(const struct device *dev, int8_t *dx, int8_t *
     return 0;
 }
 
-/* ========= ★ 抽象复用：滚轮单轴处理函数 ========= */
+
 static inline void process_scroll_axis(const struct device *dev, int8_t delta, int16_t *residue,
                                        uint16_t input_code, int8_t dir_mult) {
     int abs_delta = abs(delta);
 
-    // ★ 不清零，保持连续性
     if (abs_delta <= SCROLL_DEADZONE) {
         return;
     }
@@ -209,7 +207,6 @@ static inline void process_scroll_axis(const struct device *dev, int8_t delta, i
         abs_delta = SCROLL_INPUT_MAX;
     }
 
-    // ★ 非线性 divisor（更丝滑）
     float t = (float)abs_delta / SCROLL_INPUT_MAX;
     t = t * t;
 
@@ -227,7 +224,6 @@ static inline void process_scroll_axis(const struct device *dev, int8_t delta, i
         *residue %= divisor;
     }
 
-    // ★ 阻尼（关键）
     *residue = (*residue * 3) / 4;
 }
 
@@ -244,7 +240,6 @@ static inline void process_arrow_axis(const struct device *dev, int8_t delta, in
         abs_delta = ARROW_INPUT_MAX;
     }
 
-    // ★ 非线性 divisor（更丝滑）
     float t = (float)abs_delta / SCROLL_INPUT_MAX;
     t = t * t;
 
@@ -254,7 +249,7 @@ static inline void process_arrow_axis(const struct device *dev, int8_t delta, in
     if (divisor < 1)
         divisor = 1;
 
-    *residue += delta; // 替换掉 dir_mult
+    *residue += delta; 
     int16_t arrow_ticks = *residue / divisor;
     if (arrow_ticks != 0) {
         uint16_t key = (arrow_ticks > 0) ? key_pos : key_neg;
@@ -266,7 +261,6 @@ static inline void process_arrow_axis(const struct device *dev, int8_t delta, in
         *residue %= divisor;
     }
 
-    // 阻尼（防止漂移）
     *residue = (*residue * 3) / 4;
 }
 
@@ -290,7 +284,7 @@ static void trackpoint_work_cb(struct k_work *work) {
 
     int8_t dx = 0, dy = 0;
 
-    /* ========= 单次读取（核心改动） ========= */
+    /* ========= single read ========= */
     int ret = trackpoint_read_packet(dev, &dx, &dy);
 
     if (ret != 0) {
@@ -305,7 +299,7 @@ static void trackpoint_work_cb(struct k_work *work) {
 
     last_activity_time = now;
 
-    /* ========= scroll mode 切换检测 ========= */
+    /* ========= scroll mode detect ========= */
     bool just_enter_scroll = scroll_key_pressed && !last_scroll_key_pressed;
     bool just_enter_arrow = arrow_key_pressed && !last_arrow_key_pressed;
     bool capslock = current_indicators & HID_INDICATORS_CAPS_LOCK;
@@ -320,7 +314,6 @@ static void trackpoint_work_cb(struct k_work *work) {
         int abs_dx = abs(dx);
         int abs_dy = abs(dy);
 
-        // ★ 同 scroll 的主方向锁定
         if (abs_dy * DOMINANT_DENOMINATOR > abs_dx * DOMINANT_NUMERATOR) {
             dx = 0;
         } else if (abs_dx * DOMINANT_DENOMINATOR > abs_dy * DOMINANT_NUMERATOR) {
@@ -330,12 +323,10 @@ static void trackpoint_work_cb(struct k_work *work) {
             dy = 0;
         }
 
-        // ★ X → 左右
         process_arrow_axis(dev, dx, &data->arrow_residue_x,
                            INPUT_BTN_0,  // 左
                            INPUT_BTN_1); // 右
-
-        // ★ Y → 上下
+        
         process_arrow_axis(dev, dy, &data->arrow_residue_y,
                            INPUT_BTN_2,  // 上
                            INPUT_BTN_3); // 下
@@ -364,8 +355,6 @@ static void trackpoint_work_cb(struct k_work *work) {
         input_report_rel(dev, INPUT_REL_HWHEEL, -out_x, false, K_FOREVER);
         input_report_rel(dev, INPUT_REL_WHEEL, out_y, true, K_FOREVER);
         k_msleep(25);
-        // process_scroll_axis(dev, dx, &data->scroll_residue_x, INPUT_REL_HWHEEL, SCROLL_X_DIR);
-        // process_scroll_axis(dev, dy, &data->scroll_residue_y, INPUT_REL_WHEEL, SCROLL_Y_DIR);
 
     } else {
 
@@ -394,13 +383,12 @@ static void trackpoint_work_cb(struct k_work *work) {
     k_msleep(5);
 }
 
-/* ========= ★ GPIO 中断 ========= */
+/* ========= ★ GPIO Interrupt ========= */
 static void motion_isr(const struct device *port, struct gpio_callback *cb, uint32_t pins) {
     struct trackpoint_data *data = CONTAINER_OF(cb, struct trackpoint_data, motion_cb_data);
 
     last_activity_time = k_uptime_get_32();
 
-    // ⭐ 改这里：提交到专用 work queue
     k_work_submit_to_queue(&tp_workq, &data->work);
 }
 
@@ -414,7 +402,7 @@ static void trackpoint_enable_irq_work_cb(struct k_work *work) {
 
     LOG_INF("TrackPoint IRQ enabled (delayed)");
 }
-/* ========= 初始化函数 ========= */
+/* ========= Inital ========= */
 static int trackpoint_init(const struct device *dev) {
     const struct trackpoint_config *cfg = dev->config;
     struct trackpoint_data *data = dev->data;
@@ -434,7 +422,7 @@ static int trackpoint_init(const struct device *dev) {
 
     k_work_init(&data->work, trackpoint_work_cb);
 
-    /* ========= ⭐ 启动独立 Work Queue ========= */
+    /* ========= ⭐  Work Queue ========= */
     k_work_queue_start(&tp_workq, tp_workq_stack, K_THREAD_STACK_SIZEOF(tp_workq_stack),
                        TP_WORKQ_PRIORITY, NULL);
 
