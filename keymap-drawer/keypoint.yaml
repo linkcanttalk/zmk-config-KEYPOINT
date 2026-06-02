@@ -172,7 +172,7 @@ layers:
   - ''
   - ''
   MOUSE:
-  - TAB
+  - ESC
   - Q
   - W
   - E
