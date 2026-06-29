@@ -19,13 +19,13 @@ layers:
   - D
   - F
   - G
-  - '&mkp LCLK'
+  - Ctl+UP ARROW
   - '&mkp LCLK'
   - H
   - J
   - K
   - L
-  - ;
+  - '&td_semi_dquotes'
   - ENTER
   - LSHFT
   - Z
@@ -39,55 +39,55 @@ layers:
   - '&msc SCRL_UP'
   - N
   - M
-  - ','
-  - .
-  - /
+  - '&td_comma_lbrc'
+  - '&td_dot_rbrc'
+  - '&td_fslh_up'
   - RSHFT
   - LCTRL
-  - LGUI
-  - LALT
-  - MUTE
+  - LEFT ALT
   - RAISE
+  - Ctl+UP ARROW
   - SPACE
+  - {t: ESC, h: LGUI}
   - LOWER
   - LOWER
-  - SPACE
   - RAISE
+  - SPACE
   - MUTE
-  - '-'
-  - '='
-  - '`'
+  - '&td_minus_left'
+  - '&td_equal_down'
+  - '&td_enter_right_grave'
   LOWER:
   - ESC
-  - '1'
-  - '2'
-  - '3'
-  - '4'
-  - '5'
-  - '6'
-  - '7'
-  - '8'
-  - '9'
-  - '0'
+  - '&td_dShft_1'
+  - '&td_dShft_2'
+  - '&td_dShft_3'
+  - '&td_dShft_4'
+  - '&td_dShft_5'
+  - '&td_dShft_6'
+  - '&td_dShft_7'
+  - '&td_dShft_8'
+  - '&td_dShft_9'
+  - '&td_dShft_0'
   - DEL
   - CAPS
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - '&td_dShft_4'
+  - '&td_dShft_5'
+  - '&td_dShft_6'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - '&mkp RCLK'
   - '&mkp RCLK'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - ''''
+  - LEFT
+  - RIGHT
+  - ''
+  - ''
+  - '&td_dShft_sqt'
   - ENTER
   - LSHFT
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - '&td_dShft_7'
+  - '&td_dShft_8'
+  - '&td_dShft_9'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
@@ -96,28 +96,28 @@ layers:
   - '&bl BL_INC'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - '['
-  - ']'
-  - NUBS
+  - '&td_dShft_lbkt'
+  - '&td_dShft_rbkt'
+  - '&td_dShft_bslh'
   - RSHFT
   - LCTRL
-  - LGUI
-  - '&bootloader'
+  - LEFT ALT
+  - '&td_dShft_0'
   - BT CLR
-  - {t: ▽, type: trans}
   - SPACE
-  - {t: LOWER, type: held}
-  - LOWER
+  - {t: ESC, h: LGUI}
+  - {t: ENTER, type: held}
+  - ''
+  - ''
   - SPACE
-  - {t: MOUSE, h: toggle}
   - OUT TOG
-  - '&bootloader'
+  - ''
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   RAISE:
   - ESC
   - F1
-  - UP
+  - '&td_up_f2'
   - F3
   - F4
   - F5
@@ -126,107 +126,107 @@ layers:
   - F8
   - F9
   - F10
-  - ''
+  - BACKSPACE
   - CAPS
   - LEFT
   - DOWN
   - RIGHT
   - ''
   - ''
-  - ''
+  - Ctl+Gui+Q
   - ''
   - F11
   - F12
   - ''
   - ''
   - ''
-  - ''
-  - LSHFT
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - LCTRL
-  - LGUI
-  - ''
-  - ''
-  - {t: RAISE, type: held}
-  - ''
-  - ''
-  - ''
-  - ''
-  - RAISE
-  - ''
-  - ''
-  - ''
-  - ''
-  MOUSE:
-  - TAB
-  - Q
-  - W
-  - E
-  - R
-  - T
-  - Y
-  - {t: U, h: '&mkp MB3'}
-  - I
-  - O
-  - P
-  - BSPC
-  - CAPS
-  - A
-  - S
-  - D
-  - F
-  - G
-  - '&mkp LCLK'
-  - '&mkp LCLK'
-  - H
-  - {t: J, h: '&mkp MB1'}
-  - K
-  - L
-  - ;
   - ENTER
   - LSHFT
-  - Z
-  - X
-  - C
-  - V
-  - B
-  - '&msc SCRL_DOWN'
-  - '&msc SCRL_UP'
   - ''
   - ''
-  - N
-  - {t: M, h: '&mkp MB2'}
-  - ','
-  - .
-  - /
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - UP
   - RSHFT
   - LCTRL
+  - LEFT ALT
+  - {type: held}
+  - MUTE
   - LGUI
-  - LALT
+  - {t: ESC, h: LGUI}
   - ''
-  - RAISE
-  - SPACE
+  - ''
+  - ''
+  - ''
+  - Ctl+Gui+Q
+  - LEFT
+  - DOWN
+  - RIGHT
+  MOUSE:
+  - ESC
+  - Ctl+LEFT
+  - UP
+  - Ctl+RIGHT
+  - ''
+  - ''
+  - '&mkp RCLK'
+  - ''
+  - ''
+  - ''
+  - ''
+  - BSPC
+  - CAPS
+  - LEFT
+  - DOWN
+  - RIGHT
+  - ''
+  - ''
+  - Ctl+UP
+  - '&mkp LCLK'
+  - Ctl+LEFT
+  - Ctl+RIGHT
+  - ''
+  - ''
+  - ''
+  - ENTER
+  - LSHFT
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - RSHFT
+  - LCTRL
+  - LEFT ALT
+  - ''
+  - Ctl+UP ARROW
+  - ''
+  - {t: ESC, h: LGUI}
   - '&mkp MB1'
   - '&mkp MB1'
   - '&tdRMCLK'
-  - RAISE
-  - MUTE
-  - '-'
-  - '='
-  - '`'
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
   RESERVE: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
