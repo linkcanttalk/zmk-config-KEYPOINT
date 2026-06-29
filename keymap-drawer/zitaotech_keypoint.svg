@@ -346,13 +346,13 @@ path.combo {
 </a></g>
 <g transform="translate(500, 245) rotate(-23.87)" class="key keypos-49">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<a href="#LOWER">
-<text x="0" y="0" class="key tap layer-activator">LOWER</text>
+<a href="#RAISE">
+<text x="0" y="0" class="key tap layer-activator">RAISE</text>
 </a></g>
 <g transform="translate(553, 212) rotate(-11.93)" class="key keypos-50">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<a href="#RAISE">
-<text x="0" y="0" class="key tap layer-activator">RAISE</text>
+<a href="#LOWER">
+<text x="0" y="0" class="key tap layer-activator">LOWER</text>
 </a></g>
 <g transform="translate(616, 203)" class="key keypos-51">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
