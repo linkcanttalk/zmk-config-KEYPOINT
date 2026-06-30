@@ -180,7 +180,7 @@ static void pulse_work_handler(struct k_work *work) {
             k_work_reschedule(&pulse_work, K_NO_WAIT);
         } else {
             pulse_active = false;
-            if (pulse_layer_indicate(zmk_keymap_highest_layer_active())) {
+            if (touch_active && pulse_layer_indicate(zmk_keymap_highest_layer_active())) {
                 set_led_brightness(pulse_saved_brt > 0 ? pulse_saved_brt : 0);
             } else {
                 set_led_brightness(0);
@@ -258,11 +258,11 @@ static void polling_work_handler(struct k_work *work) {
                 if (keyboard_active) {
                     last_valid_brt = MAX(BRT_MIN, current_brt);
                 }
-                if (!pulse_active) {
-                    set_led_brightness(last_valid_brt);
-                }
+                pulse_stop();
+                set_led_brightness(last_valid_brt);
                 k_work_cancel_delayable(&auto_off_work);
-            } else if (!pulse_active) {
+            } else {
+                pulse_stop();
                 set_led_brightness(0);
             }
         }
@@ -272,13 +272,12 @@ static void polling_work_handler(struct k_work *work) {
     if (!capslock_on && current_touch != touch_active) {
         touch_active = current_touch;
         if (touch_active) {
+            pulse_stop();
             manual_override = true;
             if (keyboard_active) {
                 last_valid_brt = MAX(BRT_MIN, current_brt);
             }
-            if (!pulse_active) {
-                set_led_brightness(last_valid_brt);
-            }
+            set_led_brightness(last_valid_brt);
             k_work_cancel_delayable(&auto_off_work);
         } else {
             k_work_reschedule(&auto_off_work, K_MSEC(AUTO_OFF_DELAY_MS));
@@ -291,9 +290,8 @@ static void polling_work_handler(struct k_work *work) {
         if (current_brt > 0) {
             manual_override = true;
             last_valid_brt = MAX(BRT_MIN, current_brt);
-            if (!pulse_active) {
-                set_led_brightness(last_valid_brt);
-            }
+            pulse_stop();
+            set_led_brightness(last_valid_brt);
             k_work_reschedule(&auto_off_work, K_MSEC(AUTO_OFF_DELAY_MS));
         }
     }
@@ -306,7 +304,7 @@ static int layer_change_listener(const zmk_event_t *eh) {
     if (current_layer != last_layer) {
         last_layer = current_layer;
         k_work_cancel_delayable(&pulse_repeat_work);
-        if (!capslock_on && pulse_layer_indicate(current_layer)) {
+        if (!capslock_on && !touch_active && pulse_layer_indicate(current_layer)) {
             if (!pulse_active) {
                 pulse_saved_brt = led_hw_brt;
             }
@@ -325,10 +323,10 @@ uint8_t indicator_tp_get_last_valid_brightness(void) { return last_valid_brt; }
 
 static void pulse_repeat_work_handler(struct k_work *work) {
     uint8_t current_layer = zmk_keymap_highest_layer_active();
-    if (!capslock_on && pulse_layer_indicate(current_layer) && !pulse_active) {
+    if (!capslock_on && !touch_active && pulse_layer_indicate(current_layer) && !pulse_active) {
         trackpad_led_pulse(current_layer);
     }
-    if (!capslock_on && pulse_layer_indicate(current_layer)) {
+    if (!capslock_on && !touch_active && pulse_layer_indicate(current_layer)) {
         k_work_reschedule(&pulse_repeat_work, K_MSEC(PULSE_REPEAT_MS));
     }
 }
