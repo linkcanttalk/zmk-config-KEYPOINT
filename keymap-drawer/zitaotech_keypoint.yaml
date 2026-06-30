@@ -89,7 +89,7 @@ layers:
   - '&td_dShft_8'
   - '&td_dShft_9'
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - RGB TOG
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - '&bl BL_DEC'
