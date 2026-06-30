@@ -349,6 +349,7 @@ static void a320_work_cb(struct k_work *work) {
     bool just_enter_scroll = scroll_key_pressed && !last_scroll_key_pressed;
     bool just_enter_arrow = arrow_key_pressed && !last_arrow_key_pressed;
     bool capslock = current_indicators & HID_INDICATORS_CAPS_LOCK;
+    bool rgb_on = indicator_tp_is_rgb_on();
 
     if (arrow_key_pressed) {
 
@@ -372,43 +373,82 @@ static void a320_work_cb(struct k_work *work) {
         process_arrow_axis(dev, dx, &data->arrow_residue_x, INPUT_BTN_1, INPUT_BTN_0);
 
         process_arrow_axis(dev, dy, &data->arrow_residue_y, INPUT_BTN_3, INPUT_BTN_2);
-    } else if (scroll_key_pressed || capslock) {
+    } else if (rgb_on) {
+        /* ⭐ RGB ON: Mouse mode (default), Space/CapsLock temporarily scroll */
+        if (scroll_key_pressed || capslock) {
+            /* Temporary scroll mode */
+            if (just_enter_scroll) {
+                data->scroll_residue_x = dx * SCROLL_X_DIR;
+                data->scroll_residue_y = dy * SCROLL_Y_DIR;
+            }
+            float speed = sqrtf((float)(dx * dx + dy * dy));
+            float scale = (speed > 80)   ? 0.05f
+                          : (speed > 40) ? 0.04f
+                          : (speed > 20) ? 0.03f
+                          : (speed > 5)  ? 0.02f
+                                         : 0.015f;
+            scroll_residual_x += dx * scale;
+            scroll_residual_y += dy * scale;
 
-        if (just_enter_scroll) {
-            data->scroll_residue_x = dx * SCROLL_X_DIR;
-            data->scroll_residue_y = dy * SCROLL_Y_DIR;
+            int16_t out_x = (int16_t)scroll_residual_x;
+            int16_t out_y = (int16_t)scroll_residual_y;
+
+            scroll_residual_x -= out_x;
+            scroll_residual_y -= out_y;
+            input_report_rel(dev, INPUT_REL_HWHEEL, out_x, false, K_FOREVER);
+            input_report_rel(dev, INPUT_REL_WHEEL, -out_y, true, K_FOREVER);
+            k_msleep(25);
+        } else {
+            /* Default mouse mode */
+            uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
+            float a320_factor = 0.4f + 0.01f * a320_led_brt;
+
+            float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
+
+            float fx = dx * 3 / 4 * a320_factor * slow_mult;
+            float fy = dy * 3 / 4 * a320_factor * slow_mult;
+
+            input_report_rel(dev, INPUT_REL_X, (int)fx, false, K_NO_WAIT);
+            input_report_rel(dev, INPUT_REL_Y, (int)fy, true, K_NO_WAIT);
         }
-        float speed = sqrtf((float)(dx * dx + dy * dy));
-        float scale = (speed > 80)   ? 0.05f
-                      : (speed > 40) ? 0.04f
-                      : (speed > 20) ? 0.03f
-                      : (speed > 5)  ? 0.02f
-                                     : 0.015f;
-        scroll_residual_x += dx * scale;
-        scroll_residual_y += dy * scale;
-
-        int16_t out_x = (int16_t)scroll_residual_x;
-        int16_t out_y = (int16_t)scroll_residual_y;
-
-        scroll_residual_x -= out_x;
-        scroll_residual_y -= out_y;
-        input_report_rel(dev, INPUT_REL_HWHEEL, out_x, false, K_FOREVER);
-        input_report_rel(dev, INPUT_REL_WHEEL, -out_y, true, K_FOREVER);
-        k_msleep(25);
-    } else if (!capslock) {
-
-        uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
-        float a320_factor = 0.4f + 0.01f * a320_led_brt;
-
-        float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
-
-        float fx = dx * 3 / 4 * a320_factor * slow_mult;
-        float fy = dy * 3 / 4 * a320_factor * slow_mult;
-
-        input_report_rel(dev, INPUT_REL_X, (int)fx, false, K_NO_WAIT);
-        input_report_rel(dev, INPUT_REL_Y, (int)fy, true, K_NO_WAIT);
     } else {
-        touched = false;
+        /* ⭐ RGB OFF: Scroll mode (default), Space/CapsLock temporarily mouse */
+        if (scroll_key_pressed || capslock) {
+            /* Temporary mouse mode */
+            uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
+            float a320_factor = 0.4f + 0.01f * a320_led_brt;
+
+            float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
+
+            float fx = dx * 3 / 4 * a320_factor * slow_mult;
+            float fy = dy * 3 / 4 * a320_factor * slow_mult;
+
+            input_report_rel(dev, INPUT_REL_X, (int)fx, false, K_NO_WAIT);
+            input_report_rel(dev, INPUT_REL_Y, (int)fy, true, K_NO_WAIT);
+        } else {
+            /* Default scroll mode */
+            if (just_enter_scroll) {
+                data->scroll_residue_x = dx * SCROLL_X_DIR;
+                data->scroll_residue_y = dy * SCROLL_Y_DIR;
+            }
+            float speed = sqrtf((float)(dx * dx + dy * dy));
+            float scale = (speed > 80)   ? 0.05f
+                          : (speed > 40) ? 0.04f
+                          : (speed > 20) ? 0.03f
+                          : (speed > 5)  ? 0.02f
+                                         : 0.015f;
+            scroll_residual_x += dx * scale;
+            scroll_residual_y += dy * scale;
+
+            int16_t out_x = (int16_t)scroll_residual_x;
+            int16_t out_y = (int16_t)scroll_residual_y;
+
+            scroll_residual_x -= out_x;
+            scroll_residual_y -= out_y;
+            input_report_rel(dev, INPUT_REL_HWHEEL, out_x, false, K_FOREVER);
+            input_report_rel(dev, INPUT_REL_WHEEL, -out_y, true, K_FOREVER);
+            k_msleep(25);
+        }
     }
 
     last_scroll_key_pressed = scroll_key_pressed;
