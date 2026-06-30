@@ -180,7 +180,7 @@ static void pulse_work_handler(struct k_work *work) {
             k_work_reschedule(&pulse_work, K_NO_WAIT);
         } else {
             pulse_active = false;
-            if (pulse_layer_indicate(zmk_keymap_highest_layer_active())) {
+            if (touch_active && pulse_layer_indicate(zmk_keymap_highest_layer_active())) {
                 set_led_brightness(pulse_saved_brt > 0 ? pulse_saved_brt : 0);
             } else {
                 set_led_brightness(0);
