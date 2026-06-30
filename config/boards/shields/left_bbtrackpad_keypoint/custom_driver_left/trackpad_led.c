@@ -46,7 +46,7 @@ static const struct device *const led_dev = DEVICE_DT_GET(DT_CHOSEN(zmk_trackpad
 
 #define PULSE_STEP_MS 10
 #define PULSE_SEQ_LEN 41 /* 10 fade-in + 20 hold + 6 fade-out + 5 rest */
-#define PULSE_REPEAT_MS 3000
+#define PULSE_REPEAT_MS 2000
 
 static struct k_work_delayable polling_work;
 static struct k_work_delayable animation_work;
