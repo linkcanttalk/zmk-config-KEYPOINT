@@ -253,8 +253,8 @@
                 <&inc_dec_kp LEFT RIGHT>;
         };
 
-        lower_layer {
-            display-name = "LOWER";
+        NUMBER_layer {
+            display-name = "NUMBER";
             bindings = <
 &kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5      &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
 &kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &trans          &trans           &mkp RCLK    &mkp RCLK    &kp LEFT            &kp RIGHT       &none         &none    &td_dShft_sqt   &kp ENTER
@@ -265,13 +265,13 @@
             sensor-bindings = <&BLE_encoder>, <&inc_dec_kp UP DOWN>;
         };
 
-        raise_layer {
-            display-name = "RAISE";
+        FUNC_layer {
+            display-name = "FUNC";
             bindings = <
-&kp ESC    &kp F1        &td_up_f2  &kp F3      &kp F4          &kp F5          &kp F6         &kp F7  &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
-&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &kp LC(LG(Q))  &none   &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none     &kp ENTER
-&kp LSHFT  &none         &none      &none       &none           &none           &none          &none   &none                   &none              &none          &none          &none     &none      &kp UP  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC        &none   &none                   &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN  &kp RIGHT
+&kp ESC    &kp F1        &td_up_f2  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
+&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none     &kp ENTER
+&kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &none                   &none              &none          &none          &none     &none      &kp UP  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &none            &none                   &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN  &kp RIGHT
             >;
 
             sensor-bindings =
