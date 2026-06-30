@@ -19,6 +19,13 @@ extern "C" {
 uint8_t indicator_tp_get_last_valid_brightness(void);
 
 /**
+ * @brief Check if RGB underglow is on
+ *
+ * @return true if RGB underglow is enabled
+ */
+bool indicator_tp_is_rgb_on(void);
+
+/**
  * @brief Run pulse LED effect
  *
  * Pre-computed 70-step sequence: ease-out 0→80 (100ms) → hold 80 (200ms) →
