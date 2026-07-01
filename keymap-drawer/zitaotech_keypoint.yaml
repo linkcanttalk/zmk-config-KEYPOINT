@@ -19,8 +19,8 @@ layers:
   - D
   - F
   - G
-  - Ctl+UP ARROW
-  - '&mkp LCLK'
+  - ''
+  - ''
   - H
   - J
   - K
@@ -45,12 +45,12 @@ layers:
   - RSHFT
   - LCTRL
   - LEFT ALT
-  - FUNC
+  - FUNCTION
   - Ctl+UP ARROW
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
-  - {t: BACKSPACE, h: FUNC}
+  - {t: BACKSPACE, h: FUNCTION}
   - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
   - MUTE
@@ -76,8 +76,8 @@ layers:
   - '&td_dShft_6'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - '&mkp RCLK'
-  - '&mkp RCLK'
+  - ''
+  - ''
   - LEFT
   - RIGHT
   - ''
@@ -89,11 +89,11 @@ layers:
   - '&td_dShft_8'
   - '&td_dShft_9'
   - {t: ▽, type: trans}
-  - RGB TOG
+  - ''
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - '&bl BL_DEC'
-  - '&bl BL_INC'
+  - ''
+  - ''
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - '&td_dShft_lbkt'
@@ -114,7 +114,7 @@ layers:
   - ''
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  FUNC:
+  FUNCTION:
   - ESC
   - F1
   - '&td_up_f2'
@@ -149,8 +149,8 @@ layers:
   - ''
   - RGB ON
   - RGB OFF
-  - ''
-  - ''
+  - '&bl BL_DEC'
+  - '&bl BL_INC'
   - ''
   - ''
   - ''
@@ -165,7 +165,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - ESC
   - ''
-  - ''
+  - RGUI
   - RGUI
   - Ctl+Gui+Q
   - LEFT
@@ -178,8 +178,8 @@ layers:
   - Ctl+RIGHT
   - ''
   - ''
-  - '&mkp RCLK'
-  - ''
+  - '&mkp MB2'
+  - ESC
   - ''
   - ''
   - ''
@@ -191,7 +191,7 @@ layers:
   - ''
   - ''
   - Ctl+UP
-  - '&mkp LCLK'
+  - ''
   - Ctl+LEFT
   - Ctl+RIGHT
   - ''
