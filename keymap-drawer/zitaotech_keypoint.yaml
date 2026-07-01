@@ -45,12 +45,12 @@ layers:
   - RSHFT
   - LCTRL
   - LEFT ALT
-  - FUNCTION
+  - FUNC
   - Ctl+UP ARROW
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
-  - {t: BACKSPACE, h: FUNCTION}
+  - {t: BACKSPACE, h: FUNC}
   - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
   - MUTE
@@ -74,8 +74,8 @@ layers:
   - '&td_dShft_4'
   - '&td_dShft_5'
   - '&td_dShft_6'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - ''
+  - ''
   - ''
   - ''
   - LEFT
@@ -88,14 +88,14 @@ layers:
   - '&td_dShft_7'
   - '&td_dShft_8'
   - '&td_dShft_9'
-  - {t: ▽, type: trans}
-  - ''
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
   - ''
   - ''
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
   - '&td_dShft_lbkt'
   - '&td_dShft_rbkt'
   - '&td_dShft_bslh'
@@ -112,9 +112,9 @@ layers:
   - {t: SPACE, h: RGUI}
   - OUT TOG
   - ''
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  FUNCTION:
+  - ''
+  - ''
+  FUNC:
   - ESC
   - F1
   - '&td_up_f2'
@@ -223,7 +223,7 @@ layers:
   - '&mkp MB1'
   - '&mkp MB1'
   - '&tdRMCLK'
-  - ''
+  - {t: SPACE, h: RGUI}
   - ''
   - ''
   - ''
