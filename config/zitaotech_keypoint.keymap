@@ -257,16 +257,16 @@
             display-name = "NUMBER";
             bindings = <
 &kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5     &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
-&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &trans          &trans          &none        &none        &kp LEFT            &kp RIGHT       &none         &none    &td_dShft_sqt   &kp ENTER
-&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &trans          &none           &trans       &trans       &none               &none           &trans        &trans   &td_dShft_lbkt  &td_dShft_rbkt  &td_dShft_bslh  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI SPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &none    &trans          &trans
+&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none           &none        &none        &kp LEFT            &kp RIGHT       &none         &none    &td_dShft_sqt   &kp ENTER
+&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none           &none        &none        &none               &none           &none         &none    &td_dShft_lbkt  &td_dShft_rbkt  &td_dShft_bslh  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI SPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &none    &none           &none
             >;
 
             sensor-bindings = <&BLE_encoder>, <&inc_dec_kp UP DOWN>;
         };
 
         FUNCTION_layer {
-            display-name = "FUNCTION";
+            display-name = "FUNC";
             bindings = <
 &kp ESC    &kp F1        &td_up_f2  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
 &kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none     &kp ENTER
@@ -282,10 +282,10 @@
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC    &kp LC(LEFT)  &kp UP    &kp LC(RIGHT)     &none           &none           &mkp MB2    &kp ESC           &none         &none          &none  &kp BSPC
-&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT         &none           &none           &kp LC(UP)  &none             &kp LC(LEFT)  &kp LC(RIGHT)  &none  &none     &none  &kp ENTER
-&kp LSHFT  &none         &none     &none             &none           &none           &none       &none             &none         &none          &none  &none     &none  &none      &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none     &kp LC(UP_ARROW)  &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1    &LMouse_sc 0 MB1  &tdRMCLK      &none          &none  &none     &none  &none
+&kp ESC    &kp LC(LEFT)  &kp UP    &kp LC(RIGHT)     &none           &none           &mkp MB2    &kp ESC           &none         &none           &none  &kp BSPC
+&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT         &none           &none           &kp LC(UP)  &none             &kp LC(LEFT)  &kp LC(RIGHT)   &none  &none     &none  &kp ENTER
+&kp LSHFT  &none         &none     &none             &none           &none           &none       &none             &none         &none           &none  &none     &none  &none      &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none     &kp LC(UP_ARROW)  &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1    &LMouse_sc 0 MB1  &tdRMCLK      &mt RGUI SPACE  &none  &none     &none  &none
             >;
 
             sensor-bindings = <&inc_dec_kp LC(RIGHT) LC(LEFT)>;
