@@ -256,10 +256,10 @@
         NUMBER_layer {
             display-name = "NUMBER";
             bindings = <
-&kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5     &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
-&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none           &none        &none        &kp LEFT            &kp RIGHT       &none         &none    &td_dShft_sqt   &kp ENTER
-&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none           &none        &none        &none               &none           &none         &none    &td_dShft_lbkt  &td_dShft_rbkt  &td_dShft_bslh  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI SPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &none    &none           &none
+&kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5      &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
+&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none            &none        &none        &kp LEFT            &kp RIGHT       &none         &none         &td_dShft_sqt   &kp ENTER
+&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none            &none        &none        &none               &none           &none         &none         &td_dShft_lbkt  &td_dShft_rbkt  &td_dShft_bslh  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI DELETE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &kp RS(RGUI)  &kp LEFT        &kp RIGHT
             >;
 
             sensor-bindings = <&BLE_encoder>, <&inc_dec_kp UP DOWN>;
@@ -271,7 +271,7 @@
 &kp ESC    &kp F1        &td_up_f2  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
 &kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none     &kp ENTER
 &kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &bl BL_DEC              &bl BL_INC         &none          &none          &none     &none      &kp UP  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &none            &kp RGUI                &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN  &kp RIGHT
+&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &kp ESCAPE       &kp RGUI                &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN  &kp RIGHT
             >;
 
             sensor-bindings =
