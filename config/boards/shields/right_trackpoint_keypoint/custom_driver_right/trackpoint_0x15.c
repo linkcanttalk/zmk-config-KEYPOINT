@@ -41,10 +41,6 @@ static struct k_work_q tp_workq;
 /* Mouse and scroll setting              */
 /* ========================================================================= */
 
-// --- Scroll direction ---
-#define SCROLL_X_DIR (-CONFIG_TRACKPOINT_SCROLL_X_DIR)
-#define SCROLL_Y_DIR CONFIG_TRACKPOINT_SCROLL_Y_DIR
-
 // --- Scroll sensitivity ---
 #define SCROLL_DEADZONE CONFIG_TRACKPOINT_SCROLL_DEADZONE
 #define SCROLL_INPUT_MAX CONFIG_TRACKPOINT_SCROLL_INPUT_MAX
@@ -72,7 +68,6 @@ static struct k_work_q tp_workq;
 #define MOTION_GPIO_FLAGS (GPIO_ACTIVE_LOW | GPIO_PULL_UP)
 
 /* ========= TrackPoint 常量 ========= */
-#define TRACKPOINT_I2C_ADDR 0x15
 #define TRACKPOINT_PACKET_LEN 7
 #define TRACKPOINT_MAGIC_BYTE0 0x50
 
@@ -177,21 +172,29 @@ struct trackpoint_data {
     int16_t arrow_residue_y;
 };
 
-/* ========= EXPONENTIAL caculate ========= */
+/* ========= S-curve + EMA acceleration ========= */
 #ifdef CONFIG_TRACKPOINT_EXPONENTIAL
-#define TP_MAX_MULT 2.0f
+#define TP_MIN_MULT 0.5f
+#define TP_MAX_MULT 2.5f
+#define TP_SIGMOID_K 2.0f
+#define TP_EMA_ALPHA 0.3f
+
+static float smoothed_speed = 0;
+
 static inline float trackpoint_exponential_factor(int8_t dx, int8_t dy, uint32_t delta_ms) {
     if (delta_ms == 0)
         delta_ms = 1;
 
     int dist = abs(dx) + abs(dy);
     if (dist < 1)
-        return 1.0f;
+        return TP_MIN_MULT;
 
-    float speed = (float)dist / (float)delta_ms;
-    float mult = expf(speed * 1.307357f);
+    float raw_speed = (float)dist / (float)delta_ms;
+    smoothed_speed = TP_EMA_ALPHA * raw_speed + (1.0f - TP_EMA_ALPHA) * smoothed_speed;
 
-    return (mult > TP_MAX_MULT) ? TP_MAX_MULT : mult;
+    float sigmoid = 1.0f / (1.0f + expf(-TP_SIGMOID_K * smoothed_speed));
+    float mult = TP_MIN_MULT + (TP_MAX_MULT - TP_MIN_MULT) * sigmoid;
+    return mult;
 }
 #endif
 
@@ -219,38 +222,6 @@ static int trackpoint_read_packet(const struct device *dev, int8_t *dx, int8_t *
     return 0;
 }
 
-
-static inline void process_scroll_axis(const struct device *dev, int8_t delta, int16_t *residue,
-                                       uint16_t input_code, int8_t dir_mult) {
-    int abs_delta = abs(delta);
-
-    if (abs_delta <= SCROLL_DEADZONE) {
-        return;
-    }
-
-    if (abs_delta > SCROLL_INPUT_MAX) {
-        abs_delta = SCROLL_INPUT_MAX;
-    }
-
-    float t = (float)abs_delta / SCROLL_INPUT_MAX;
-    t = t * t;
-
-    float f_div = SCROLL_DIVISOR_SLOW - (SCROLL_DIVISOR_SLOW - SCROLL_DIVISOR_FAST) * t;
-
-    int divisor = (int)f_div;
-    if (divisor < 1)
-        divisor = 1;
-
-    *residue += (delta * dir_mult);
-
-    int16_t scroll_ticks = *residue / divisor;
-    if (scroll_ticks != 0) {
-        input_report_rel(dev, input_code, scroll_ticks, true, K_NO_WAIT);
-        *residue %= divisor;
-    }
-
-    *residue = (*residue * 3) / 4;
-}
 
 static inline void process_arrow_axis(const struct device *dev, int8_t delta, int16_t *residue,
                                       uint16_t key_neg, uint16_t key_pos) {
@@ -327,7 +298,6 @@ static void trackpoint_work_cb(struct k_work *work) {
     /* ========= scroll mode detect ========= */
     bool just_enter_scroll = scroll_key_pressed && !last_scroll_key_pressed;
     bool just_enter_arrow = arrow_key_pressed && !last_arrow_key_pressed;
-    bool capslock = current_indicators & HID_INDICATORS_CAPS_LOCK;
 
     if (arrow_key_pressed) {
 
@@ -359,21 +329,40 @@ static void trackpoint_work_cb(struct k_work *work) {
     } else if (scroll_key_pressed) {
 
         if (just_enter_scroll) {
-            data->scroll_residue_x = dx * SCROLL_X_DIR;
-            data->scroll_residue_y = dy * SCROLL_Y_DIR;
+            data->scroll_residue_x = 0;
+            data->scroll_residue_y = 0;
         }
 
         float speed = sqrtf((float)(dx * dx + dy * dy));
-        float scale = (speed > 80)   ? 0.05f
-                      : (speed > 40) ? 0.04f
-                      : (speed > 20) ? 0.03f
-                      : (speed > 5)  ? 0.02f
-                                     : 0.015f;
-        scroll_residual_x += dx * scale;
-        scroll_residual_y += dy * scale;
+        float scale = 0.025f + 0.05f * MIN(speed / 80.0f, 1.0f);
+
+        static float scroll_smooth_x = 0;
+        static float scroll_smooth_y = 0;
+        #define SCROLL_EMA_ALPHA 0.4f
+        #define SCROLL_X_MAX 3
+        #define SCROLL_DOMINANT_RATIO 1.5f
+
+        scroll_smooth_x = SCROLL_EMA_ALPHA * (dx * scale) + (1.0f - SCROLL_EMA_ALPHA) * scroll_smooth_x;
+        scroll_smooth_y = SCROLL_EMA_ALPHA * (dy * scale) + (1.0f - SCROLL_EMA_ALPHA) * scroll_smooth_y;
+
+        bool dominant_y = fabsf(scroll_smooth_y) > fabsf(scroll_smooth_x) * SCROLL_DOMINANT_RATIO;
+        bool dominant_x = fabsf(scroll_smooth_x) > fabsf(scroll_smooth_y) * SCROLL_DOMINANT_RATIO;
+
+        if (!dominant_x) {
+            scroll_smooth_x = 0;
+        }
+        if (!dominant_y) {
+            scroll_smooth_y = 0;
+        }
+
+        scroll_residual_x += scroll_smooth_x;
+        scroll_residual_y += scroll_smooth_y;
 
         int16_t out_x = (int16_t)scroll_residual_x;
         int16_t out_y = (int16_t)scroll_residual_y;
+
+        if (out_x > SCROLL_X_MAX) out_x = SCROLL_X_MAX;
+        if (out_x < -SCROLL_X_MAX) out_x = -SCROLL_X_MAX;
 
         scroll_residual_x -= out_x;
         scroll_residual_y -= out_y;
