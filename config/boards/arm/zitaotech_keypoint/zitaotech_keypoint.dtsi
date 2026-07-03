@@ -39,24 +39,24 @@ RC(3,0)  RC(3,1) RC(3,2) RC(5,7) RC(3,3) RC(3,4)  RC(3,5)                      R
 
 left_encoder: encoder_left {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-        b-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-        steps = <20>;
+        a-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH)>;
+        b-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH)>;
+        steps = <80>;
         status = "disabled";
      };
 
 right_encoder: encoder_right {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0 26 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-        b-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-        steps = <20>;
+        a-gpios = <&gpio0 26 (GPIO_ACTIVE_HIGH)>;
+        b-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH)>;
+        steps = <80>;
         status = "disabled";
      };
 
      sensors: sensors {
         compatible = "zmk,keymap-sensors";
         sensors = <&left_encoder &right_encoder>;
-        triggers-per-rotation = <5>;
+        triggers-per-rotation = <20>;
     }; 
 
 };
