@@ -105,15 +105,15 @@ layers:
   - '&td_dShft_0'
   - BT CLR
   - {t: SPACE, h: LGUI}
-  - {t: SPACE, h: LGUI}
+  - {t: DELETE, h: LGUI}
   - {t: ENTER, type: held}
   - ENTER
   - {t: BACKSPACE, h: RGUI}
   - {t: SPACE, h: RGUI}
   - OUT TOG
-  - ''
-  - ''
-  - ''
+  - Sft+RGUI
+  - LEFT
+  - RIGHT
   FUNC:
   - ESC
   - F1
@@ -164,7 +164,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - ESC
-  - ''
+  - ESCAPE
   - RGUI
   - RGUI
   - Ctl+Gui+Q
