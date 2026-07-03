@@ -151,7 +151,7 @@ layers:
   - RGB OFF
   - '&bl BL_DEC'
   - '&bl BL_INC'
-  - ''
+  - Ctl+UP
   - ''
   - ''
   - ''
