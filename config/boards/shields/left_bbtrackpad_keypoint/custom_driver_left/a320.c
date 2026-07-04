@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/i2c.h>
-#include <math.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
 
@@ -381,12 +380,19 @@ static void a320_work_cb(struct k_work *work) {
                 data->scroll_residue_x = dx * SCROLL_X_DIR;
                 data->scroll_residue_y = dy * SCROLL_Y_DIR;
             }
-            float speed = sqrtf((float)(dx * dx + dy * dy));
-            float scale = (speed > 80)   ? 0.05f
-                          : (speed > 40) ? 0.04f
-                          : (speed > 20) ? 0.03f
-                          : (speed > 5)  ? 0.02f
-                                         : 0.015f;
+
+            /* Optimized: avoid sqrtf, use speed_sq directly */
+            int32_t speed_sq = dx * dx + dy * dy;
+
+            /* Smooth scale curve: 0.03 ~ 0.08 continuous transition */
+            float t = (float)speed_sq / 6400.0f;  /* 80*80 = 6400 */
+            if (t > 1.0f) t = 1.0f;
+            float scale = 0.03f + t * 0.05f;
+
+            /* Residual decay: 0.9f balances responsiveness and smoothness */
+            scroll_residual_x *= 0.9f;
+            scroll_residual_y *= 0.9f;
+
             scroll_residual_x += dx * scale;
             scroll_residual_y += dy * scale;
 
@@ -397,7 +403,6 @@ static void a320_work_cb(struct k_work *work) {
             scroll_residual_y -= out_y;
             input_report_rel(dev, INPUT_REL_HWHEEL, out_x, false, K_FOREVER);
             input_report_rel(dev, INPUT_REL_WHEEL, -out_y, true, K_FOREVER);
-            k_msleep(25);
         } else {
             /* Default mouse mode */
             uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
@@ -431,12 +436,19 @@ static void a320_work_cb(struct k_work *work) {
                 data->scroll_residue_x = dx * SCROLL_X_DIR;
                 data->scroll_residue_y = dy * SCROLL_Y_DIR;
             }
-            float speed = sqrtf((float)(dx * dx + dy * dy));
-            float scale = (speed > 80)   ? 0.05f
-                          : (speed > 40) ? 0.04f
-                          : (speed > 20) ? 0.03f
-                          : (speed > 5)  ? 0.02f
-                                         : 0.015f;
+
+            /* Optimized: avoid sqrtf, use speed_sq directly */
+            int32_t speed_sq = dx * dx + dy * dy;
+
+            /* Smooth scale curve: 0.03 ~ 0.08 continuous transition */
+            float t = (float)speed_sq / 6400.0f;  /* 80*80 = 6400 */
+            if (t > 1.0f) t = 1.0f;
+            float scale = 0.03f + t * 0.05f;
+
+            /* Residual decay: 0.9f balances responsiveness and smoothness */
+            scroll_residual_x *= 0.9f;
+            scroll_residual_y *= 0.9f;
+
             scroll_residual_x += dx * scale;
             scroll_residual_y += dy * scale;
 
@@ -447,7 +459,6 @@ static void a320_work_cb(struct k_work *work) {
             scroll_residual_y -= out_y;
             input_report_rel(dev, INPUT_REL_HWHEEL, out_x, false, K_FOREVER);
             input_report_rel(dev, INPUT_REL_WHEEL, -out_y, true, K_FOREVER);
-            k_msleep(25);
         }
     }
 
