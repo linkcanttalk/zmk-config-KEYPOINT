@@ -10,6 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <stdlib.h>
+#include <math.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/i2c.h>
 #include <zmk/event_manager.h>
@@ -63,6 +64,30 @@ static struct k_work_q a320_workq;
 #define MOUSE_BASE_SPEED (CONFIG_A320_MOUSE_BASE_SPEED_PERCENT / 100.0f)
 #define MOUSE_SENS_BASE (CONFIG_A320_MOUSE_SENS_BASE_PERCENT / 100.0f)
 #define MOUSE_SENS_STEP (CONFIG_A320_MOUSE_SENS_STEP_PERCENT / 100.0f)
+
+// --- Mouse acceleration curve ---
+#define MOUSE_ACCEL_EXPONENT 1.15f
+#define MOUSE_ACCEL_DEADZONE 0
+#define MOUSE_ACCEL_MAX 50
+#define MOUSE_ACCEL_LOW_MIN 0.9f
+#define MOUSE_RESIDUAL_DECAY 0.85f
+
+static inline float apply_mouse_accel(int8_t val) {
+    if (val == 0) return 0;
+    float f = (float)val;
+    float sign = (f > 0) ? 1.0f : -1.0f;
+    float abs_f = (f > 0) ? f : -f;
+    float out_accel = powf(abs_f, MOUSE_ACCEL_EXPONENT);
+    float out_linear = abs_f * MOUSE_ACCEL_LOW_MIN;
+    float t = (abs_f - 1.0f) / 9.0f;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    t = t * t * (3.0f - 2.0f * t);
+    float out = sign * (out_linear * (1.0f - t) + out_accel * t);
+    if (out > MOUSE_ACCEL_MAX) out = MOUSE_ACCEL_MAX;
+    if (out < -MOUSE_ACCEL_MAX) out = -MOUSE_ACCEL_MAX;
+    return out;
+}
 
 /* ========= Motion GPIO ========= */
 
@@ -182,6 +207,8 @@ struct a320_data {
     int16_t scroll_residue_y;
     int16_t arrow_residue_x;
     int16_t arrow_residue_y;
+    float mouse_residue_x;
+    float mouse_residue_y;
 };
 
 static int a320_read_packet(const struct device *dev, int8_t *dx, int8_t *dy) {
@@ -293,6 +320,8 @@ static void a320_work_cb(struct k_work *work) {
         data->scroll_residue_y = 0;
         data->arrow_residue_x = 0;
         data->arrow_residue_y = 0;
+        data->mouse_residue_x = 0;
+        data->mouse_residue_y = 0;
 
         last_scroll_key_pressed = scroll_key_pressed;
         last_arrow_key_pressed = arrow_key_pressed;
@@ -410,11 +439,19 @@ static void a320_work_cb(struct k_work *work) {
 
             float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
 
-            float fx = dx * 3 / 4 * a320_factor * slow_mult;
-            float fy = dy * 3 / 4 * a320_factor * slow_mult;
+            float raw_x = apply_mouse_accel(dx) * a320_factor * slow_mult;
+            float raw_y = apply_mouse_accel(dy) * a320_factor * slow_mult;
 
-            input_report_rel(dev, INPUT_REL_X, (int)fx, false, K_NO_WAIT);
-            input_report_rel(dev, INPUT_REL_Y, (int)fy, true, K_NO_WAIT);
+            data->mouse_residue_x = data->mouse_residue_x * MOUSE_RESIDUAL_DECAY + raw_x;
+            data->mouse_residue_y = data->mouse_residue_y * MOUSE_RESIDUAL_DECAY + raw_y;
+
+            int out_x = (int)data->mouse_residue_x;
+            int out_y = (int)data->mouse_residue_y;
+            data->mouse_residue_x -= out_x;
+            data->mouse_residue_y -= out_y;
+
+            input_report_rel(dev, INPUT_REL_X, out_x, false, K_NO_WAIT);
+            input_report_rel(dev, INPUT_REL_Y, out_y, true, K_NO_WAIT);
         }
     } else {
         /* ⭐ RGB OFF: Scroll mode (default), Space/CapsLock temporarily mouse */
@@ -425,11 +462,19 @@ static void a320_work_cb(struct k_work *work) {
 
             float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
 
-            float fx = dx * 3 / 4 * a320_factor * slow_mult;
-            float fy = dy * 3 / 4 * a320_factor * slow_mult;
+            float raw_x = apply_mouse_accel(dx) * a320_factor * slow_mult;
+            float raw_y = apply_mouse_accel(dy) * a320_factor * slow_mult;
 
-            input_report_rel(dev, INPUT_REL_X, (int)fx, false, K_NO_WAIT);
-            input_report_rel(dev, INPUT_REL_Y, (int)fy, true, K_NO_WAIT);
+            data->mouse_residue_x = data->mouse_residue_x * MOUSE_RESIDUAL_DECAY + raw_x;
+            data->mouse_residue_y = data->mouse_residue_y * MOUSE_RESIDUAL_DECAY + raw_y;
+
+            int out_x = (int)data->mouse_residue_x;
+            int out_y = (int)data->mouse_residue_y;
+            data->mouse_residue_x -= out_x;
+            data->mouse_residue_y -= out_y;
+
+            input_report_rel(dev, INPUT_REL_X, out_x, false, K_NO_WAIT);
+            input_report_rel(dev, INPUT_REL_Y, out_y, true, K_NO_WAIT);
         } else {
             /* Default scroll mode */
             if (just_enter_scroll) {
