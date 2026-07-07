@@ -51,7 +51,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
-  - {t: SPACE, h: NUMBER}
+  - '&td_ht1apc_sl1'
   - {t: SPACE, h: RGUI}
   - MUTE
   - '&td_minus_left'
