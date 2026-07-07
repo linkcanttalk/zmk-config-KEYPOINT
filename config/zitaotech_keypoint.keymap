@@ -248,43 +248,43 @@
     combos {
         compatible = "zmk,combos";
 
-        ime_2a {
+        ime_2a_r {
             bindings = <&kp N2>;
             key-positions = <21 50>;
             layers = <0>;
         };
 
-        ime_2b {
+        ime_2b_r {
             bindings = <&kp N2>;
             key-positions = <21 51>;
             layers = <0>;
         };
 
-        ime_3 {
+        ime_3_r {
             bindings = <&kp N3>;
             key-positions = <21 49>;
             layers = <0>;
         };
 
-        ime_4 {
+        ime_4_r {
             bindings = <&kp N4>;
             key-positions = <21 22>;
             layers = <0>;
         };
 
-        ime_5 {
+        ime_5_r {
             bindings = <&kp N5>;
             key-positions = <21 23>;
             layers = <0>;
         };
 
-        ime_6 {
+        ime_6_r {
             bindings = <&kp N6>;
             key-positions = <21 8>;
             layers = <0>;
         };
 
-        ime_7 {
+        ime_7_r {
             bindings = <&kp N7>;
             key-positions = <21 9>;
             layers = <0>;
