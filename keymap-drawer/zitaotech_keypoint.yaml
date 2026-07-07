@@ -46,14 +46,14 @@ layers:
   - LCTRL
   - LEFT ALT
   - FUNC
-  - Ctl+UP ARROW
+  - HOME
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
-  - '&td_spcMo1_sl1'
+  - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
-  - MUTE
+  - END
   - '&td_minus_left'
   - '&td_equal_down'
   - '&td_enter_right_grave'
