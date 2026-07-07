@@ -243,6 +243,16 @@
             #binding-cells = <2>;
             tapping-term-ms = <200>;
         };
+
+        ht_none_kp: ht_none_kp {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&none>, <&kp>;
+
+            label = "HT_NONE_KP";
+        };
     };
 
     combos {
@@ -315,9 +325,7 @@
 &kp LCTRL    &kp LEFT_ALT  &mo 2  &kp LC(UP_ARROW)  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp C_MUTE  &td_minus_left  &td_equal_down    &td_enter_right_grave
             >;
 
-            sensor-bindings =
-                <&inc_dec_kp LC(RIGHT) LC(LEFT)>,
-                <&inc_dec_kp LEFT RIGHT>;
+            sensor-bindings = <&inc_dec_kp DOWN UP>, <&inc_dec_kp LEFT RIGHT>;
         };
 
         NUMBER_layer {
@@ -349,10 +357,10 @@
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC    &kp LC(LEFT)  &kp UP    &kp LC(RIGHT)     &none           &none           &mkp MB2    &kp ESC           &none         &none           &none       &kp BSPC
-&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT         &none           &none           &kp LC(UP)  &none             &kp LC(LEFT)  &kp LC(RIGHT)   &none       &none     &none  &kp ENTER
-&kp LSHFT  &kp Z         &kp X     &kp C             &kp V           &none           &none       &none             &none         &none           &kp LC(UP)  &none     &none  &none      &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none     &kp LC(UP_ARROW)  &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1    &LMouse_sc 0 MB1  &mkp MB1      &mt RGUI SPACE  &none       &none     &none  &none
+&kp ESC    &kp LC(LEFT)  &kp UP    &kp LC(RIGHT)     &none           &none           &mkp MB2    &kp ESC           &none                   &none                    &none       &kp BSPC
+&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT         &none           &none           &kp LC(UP)  &none             &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none  &kp ENTER
+&kp LSHFT  &kp Z         &kp X     &kp C             &kp V           &none           &none       &none             &none                   &none                    &kp LC(UP)  &none     &none  &none      &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none     &kp LC(UP_ARROW)  &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1    &LMouse_sc 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none     &none  &none
             >;
 
             sensor-bindings = <&inc_dec_kp LC(RIGHT) LC(LEFT)>;
