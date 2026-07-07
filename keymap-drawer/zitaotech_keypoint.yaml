@@ -51,7 +51,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
-  - '&td_ht1apc_sl1'
+  - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
   - MUTE
   - '&td_minus_left'
@@ -222,7 +222,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - '&mkp MB1'
   - '&mkp MB1'
-  - '&tdRMCLK'
+  - '&mkp MB1'
   - {t: SPACE, h: RGUI}
   - ''
   - ''
@@ -230,3 +230,22 @@ layers:
   - ''
   RESERVE: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+combos:
+- p: [21, 50]
+  k: '2'
+  l: [QWERTY]
+- p: [21, 51]
+  k: '2'
+  l: [QWERTY]
+- p: [21, 22]
+  k: '3'
+  l: [QWERTY]
+- p: [21, 23]
+  k: '4'
+  l: [QWERTY]
+- p: [21, 49]
+  k: '5'
+  l: [QWERTY]
+- p: [21, 24]
+  k: '6'
+  l: [QWERTY]
