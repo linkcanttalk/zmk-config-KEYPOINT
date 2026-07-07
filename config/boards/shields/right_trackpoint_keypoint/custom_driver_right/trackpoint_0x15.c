@@ -89,8 +89,8 @@ static bool remote_arrow_key = false;
 uint32_t last_packet_time = 0;
 
 /* ========= special key position config ========= */
-static const uint8_t local_slow_positions[] = {22};
-static const uint8_t local_arrow_positions[] = {23};
+static const uint8_t local_slow_positions[] = {20};
+static const uint8_t local_arrow_positions[] = {21};
 #define LOCAL_SLOW_POSITIONS_LEN ARRAY_SIZE(local_slow_positions)
 #define LOCAL_ARROW_POSITIONS_LEN ARRAY_SIZE(local_arrow_positions)
 static bool position_state[56] = {0};
