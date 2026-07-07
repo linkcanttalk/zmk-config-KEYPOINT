@@ -262,25 +262,31 @@
 
         ime_3 {
             bindings = <&kp N3>;
-            key-positions = <21 22>;
+            key-positions = <21 49>;
             layers = <0>;
         };
 
         ime_4 {
             bindings = <&kp N4>;
-            key-positions = <21 23>;
+            key-positions = <21 22>;
             layers = <0>;
         };
 
         ime_5 {
             bindings = <&kp N5>;
-            key-positions = <21 49>;
+            key-positions = <21 23>;
             layers = <0>;
         };
 
         ime_6 {
             bindings = <&kp N6>;
-            key-positions = <21 24>;
+            key-positions = <21 8>;
+            layers = <0>;
+        };
+
+        ime_7 {
+            bindings = <&kp N7>;
+            key-positions = <21 9>;
             layers = <0>;
         };
     };
