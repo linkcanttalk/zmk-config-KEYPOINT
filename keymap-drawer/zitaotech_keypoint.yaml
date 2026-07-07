@@ -42,7 +42,7 @@ layers:
   - '&td_comma_lbrc'
   - '&td_dot_rbrc'
   - '&td_fslh_up'
-  - RSHFT
+  - {t: ENTER, h: RSHFT}
   - LCTRL
   - LEFT ALT
   - FUNC
@@ -51,7 +51,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
-  - {t: SPACE, h: NUMBER}
+  - '&td_spcMo1_sl1'
   - {t: SPACE, h: RGUI}
   - MUTE
   - '&td_minus_left'
