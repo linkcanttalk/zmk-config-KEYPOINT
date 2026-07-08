@@ -253,6 +253,32 @@
 
             label = "HT_NONE_KP";
         };
+
+        td_rclk_mclk: td_rclk_mclk {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TD_RCLK_MCLK";
+            #binding-cells = <0>;
+            bindings = <&mkp MB2>, <&mkp MB3>;
+
+            tapping-term-ms = <300>;
+        };
+
+        td_scrollLclk_lclk: td_scrollLclk_lclk {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TD_SCROLLLCLK_LCLK";
+            #binding-cells = <0>;
+            bindings = <&ht_none_mkp 0 MB1>, <&mkp MB1>;
+        };
+
+        ht_none_mkp: ht_none_mkp {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HT_NONE_MKP";
+            bindings = <&none>, <&mkp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            flavor = "tap-preferred";
+        };
     };
 
     combos {
@@ -357,10 +383,10 @@
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC    &kp HOME      &kp UP    &kp END    &none           &none           &mkp MB2    &kp ESC           &none                   &none                    &none       &kp BSPC
-&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none           &none           &kp LC(UP)  &none             &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none  &kp ENTER
-&kp LSHFT  &kp Z         &kp X     &kp C      &kp V           &none           &none       &none             &none                   &none                    &kp LC(UP)  &none     &none  &none      &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none     &none      &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1    &LMouse_sc 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none     &none  &none
+&kp ESC    &kp HOME      &kp UP    &kp END    &none           &none           &td_rclk_mclk  &kp ESC              &none                   &none                    &none       &kp BSPC
+&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none           &none           &kp LC(UP)     &none                &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none  &kp ENTER
+&kp LSHFT  &kp Z         &kp X     &kp C      &kp V           &none           &none          &none                &none                   &none                    &kp LC(UP)  &none     &none  &none      &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none     &none      &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1       &td_scrollLclk_lclk  &mkp MB1                &mt RGUI SPACE           &none       &none     &none  &none
             >;
         };
 
