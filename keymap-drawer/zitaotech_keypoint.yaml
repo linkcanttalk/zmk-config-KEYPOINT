@@ -78,8 +78,8 @@ layers:
   - ''
   - ''
   - ''
-  - LEFT
-  - RIGHT
+  - Ctl+LEFT
+  - Ctl+RIGHT
   - ''
   - ''
   - '&td_dShft_sqt'
@@ -173,9 +173,9 @@ layers:
   - RIGHT
   MOUSE:
   - ESC
-  - Ctl+LEFT
+  - HOME
   - UP
-  - Ctl+RIGHT
+  - END
   - ''
   - ''
   - '&mkp MB2'
@@ -217,7 +217,7 @@ layers:
   - LCTRL
   - LEFT ALT
   - ''
-  - Ctl+UP ARROW
+  - ''
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - '&mkp MB1'
