@@ -4,79 +4,82 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include <dt-bindings/zmk/mouse.h>
-#include <behaviors.dtsi>
-#include <dt-bindings/zmk/backlight.h>
-#include <dt-bindings/zmk/bt.h>
-#include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/outputs.h>
-#include <dt-bindings/zmk/pointing.h>
-#include <dt-bindings/zmk/rgb.h>
+// ═══════════════════════════════════════════════════════════════
+// 头文件包含
+// ═══════════════════════════════════════════════════════════════
+#include <dt-bindings/zmk/mouse.h>      // 鼠标绑定
+#include <behaviors.dtsi>               // 行为定义
+#include <dt-bindings/zmk/backlight.h>  // 背光控制
+#include <dt-bindings/zmk/bt.h>         // 蓝牙控制
+#include <dt-bindings/zmk/keys.h>       // 按键定义
+#include <dt-bindings/zmk/outputs.h>    // 输出控制
+#include <dt-bindings/zmk/pointing.h>   // 指向设备
+#include <dt-bindings/zmk/rgb.h>        // RGB灯光
 
-#define LOWER 1
-#define RAISE 2
-#define MOUSE 3
-#define BOT bootloader
+// 层定义常量
+#define LOWER 1    // 降低层（数字层）
+#define RAISE 2    // 升高层（功能层）
+#define MOUSE 3    // 鼠标层
+#define BOT bootloader  // 引导加载程序
 
+// ═══════════════════════════════════════════════════════════════
+// 主配置结构
+// ═══════════════════════════════════════════════════════════════
 / {
     behaviors {
-    };
+        // ═══════════════════════════════════════════════════════════════
+        // 传感器行为 (SENSOR BEHAVIORS)
+        // ═══════════════════════════════════════════════════════════════
 
-    behaviors {
-    };
-
-    behaviors {
-    };
-
-    behaviors {
-    };
-
-    behaviors {
-    };
-
-    behaviors {
+        // BLE编码器 - 旋转切换蓝牙设备
         BLE_encoder: BLE_encoder {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
             bindings = <&bt BT_NXT>, <&bt BT_PRV>;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 点击舞步行为 (TAP DANCE BEHAVIORS)
+        // ═══════════════════════════════════════════════════════════════
+
+        // 方向键点击舞步
+        // FSLH/UP - 单击斜杠，双击上箭头
         td_fslh_up: td_fslh_up {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_FSLH_UP";
             #binding-cells = <0>;
             bindings = <&kp FSLH>, <&kp UP>;
-
             tapping-term-ms = <250>;
         };
 
+        // 减号/左箭头 - 单击减号，双击左箭头
         td_minus_left: td_minus_left {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_MINUS_LEFT";
             #binding-cells = <0>;
             bindings = <&kp MINUS>, <&kp LEFT>;
-
             tapping-term-ms = <250>;
         };
 
+        // 等号/下箭头 - 单击等号，双击下箭头
         td_equal_down: td_equal_down {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_EQUAL_DOWN";
             #binding-cells = <0>;
             bindings = <&kp EQUAL>, <&kp DOWN>;
-
             tapping-term-ms = <250>;
         };
 
+        // 回车/右/反引号 - 三击舞步：回车、右箭头、反引号
         td_enter_right_grave: td_enter_right_grave {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_ENTER_RIGHT_GRAVE";
             #binding-cells = <0>;
             bindings = <&kp ENTER>, <&kp RIGHT>, <&kp GRAVE>;
-
             tapping-term-ms = <300>;
         };
 
+        // 上箭头/F2 - 单击上箭头，双击F2
         td_up_f2: td_up_f2 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_UP_F2";
@@ -84,6 +87,8 @@
             bindings = <&kp UP_ARROW>, <&kp F2>;
         };
 
+        // 符号点击舞步
+        // 分号/双引号 - 单击分号，双击双引号
         td_semi_dquotes: td_semi_dquotes {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_SEMI_DQUOTES";
@@ -91,6 +96,7 @@
             bindings = <&kp SEMI>, <&kp DOUBLE_QUOTES>;
         };
 
+        // 逗号/左花括号 - 单击逗号，双击左花括号
         td_comma_lbrc: td_comma_lbrc {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_COMMA_LBRC";
@@ -98,6 +104,7 @@
             bindings = <&kp COMMA>, <&kp LBRC>;
         };
 
+        // 句号/右花括号 - 单击句号，双击右花括号
         td_dot_rbrc: td_dot_rbrc {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DOT_RBRC";
@@ -105,6 +112,17 @@
             bindings = <&kp DOT>, <&kp RBRC>;
         };
 
+        // 右键/中键 - 单击鼠标右键，双击鼠标中键
+        td_rclk_mclk: td_rclk_mclk {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TD_RCLK_MCLK";
+            #binding-cells = <0>;
+            bindings = <&mkp MB2>, <&mkp MB3>;
+            tapping-term-ms = <300>;
+        };
+
+        // 数字点击舞步（带Shift变体）
+        // 数字1/感叹号 - 单击1，双击Shift+1(!)
         td_dShft_1: td_dShft_1 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_1";
@@ -112,6 +130,7 @@
             bindings = <&kp NUMBER_1>, <&kp EXCL>;
         };
 
+        // 数字2/@符号 - 单击2，双击Shift+2(@)
         td_dShft_2: td_dShft_2 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_2";
@@ -119,6 +138,7 @@
             bindings = <&kp NUMBER_2>, <&kp AT>;
         };
 
+        // 数字3/#符号 - 单击3，双击Shift+3(#)
         td_dShft_3: td_dShft_3 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_3";
@@ -126,6 +146,7 @@
             bindings = <&kp N3>, <&kp HASH>;
         };
 
+        // 数字4/$符号 - 单击4，双击Shift+4($)
         td_dShft_4: td_dShft_4 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_4";
@@ -133,6 +154,7 @@
             bindings = <&kp N4>, <&kp DLLR>;
         };
 
+        // 数字5/%符号 - 单击5，双击Shift+5(%)
         td_dShft_5: td_dShft_5 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_5";
@@ -140,6 +162,7 @@
             bindings = <&kp N5>, <&kp PRCNT>;
         };
 
+        // 数字6/^符号 - 单击6，双击Shift+6(^)
         td_dShft_6: td_dShft_6 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_6";
@@ -147,6 +170,7 @@
             bindings = <&kp N6>, <&kp CARET>;
         };
 
+        // 数字7/&符号 - 单击7，双击Shift+7(&)
         td_dShft_7: td_dShft_7 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_7";
@@ -154,6 +178,7 @@
             bindings = <&kp N7>, <&kp AMPS>;
         };
 
+        // 数字8/*符号 - 单击8，双击Shift+8(*)
         td_dShft_8: td_dShft_8 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_8";
@@ -161,6 +186,7 @@
             bindings = <&kp N8>, <&kp STAR>;
         };
 
+        // 数字9/左括号 - 单击9，双击Shift+9(()
         td_dShft_9: td_dShft_9 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_9";
@@ -168,6 +194,7 @@
             bindings = <&kp N9>, <&kp LPAR>;
         };
 
+        // 数字0/右括号 - 单击0，双击Shift+0())
         td_dShft_0: td_dShft_0 {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_0";
@@ -175,6 +202,8 @@
             bindings = <&kp N0>, <&kp RPAR>;
         };
 
+        // 括号/符号点击舞步
+        // 单引号/双引号 - 单击单引号，双击双引号
         td_dShft_sqt: td_dShft_sqt {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_SQT";
@@ -182,6 +211,7 @@
             bindings = <&kp SQT>, <&kp DQT>;
         };
 
+        // 左方括号/左花括号 - 单击左方括号，双击左花括号
         td_dShft_lbkt: td_dShft_lbkt {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_LBKT";
@@ -189,6 +219,7 @@
             bindings = <&kp LBKT>, <&kp LBRC>;
         };
 
+        // 右方括号/右花括号 - 单击右方括号，双击右花括号
         td_dShft_rbkt: td_dShft_rbkt {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_RBKT";
@@ -196,6 +227,7 @@
             bindings = <&kp RBKT>, <&kp RBRC>;
         };
 
+        // 反斜杠/竖线 - 单击反斜杠，双击竖线
         td_dShft_bslh: td_dShft_bslh {
             compatible = "zmk,behavior-tap-dance";
             label = "TD_DSHFT_BSLH";
@@ -203,96 +235,104 @@
             bindings = <&kp BSLH>, <&kp PIPE>;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 长按点击行为 (HOLD-TAP BEHAVIORS)
+        // ═══════════════════════════════════════════════════════════════
+
+        // 长按激活图层，点击输出按键
         ht_mo_mkp: ht_mo_mkp {
             compatible = "zmk,behavior-hold-tap";
             label = "HT_MO_MKP";
-            bindings = <&mo>, <&mkp>;
-
             #binding-cells = <2>;
+            bindings = <&mo>, <&mkp>;
             tapping-term-ms = <200>;
         };
 
+        // 长按无操作，点击输出按键（优先点击）
         ht_none_kp: ht_none_kp {
             compatible = "zmk,behavior-hold-tap";
+            label = "HT_NONE_KP";
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             bindings = <&none>, <&kp>;
-
-            label = "HT_NONE_KP";
         };
 
-        td_rclk_mclk: td_rclk_mclk {
-            compatible = "zmk,behavior-tap-dance";
-            label = "TD_RCLK_MCLK";
-            #binding-cells = <0>;
-            bindings = <&mkp MB2>, <&mkp MB3>;
-
-            tapping-term-ms = <300>;
-        };
-
+        // 长按无操作，点击输出鼠标按键（优先点击）
         ht_none_mkp: ht_none_mkp {
             compatible = "zmk,behavior-hold-tap";
             label = "HT_NONE_MKP";
-            bindings = <&none>, <&mkp>;
-
             #binding-cells = <2>;
-            tapping-term-ms = <200>;
             flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&none>, <&mkp>;
         };
     };
 
+    // ═══════════════════════════════════════════════════════════════
+    // 组合键 (COMBOS)
+    // ═══════════════════════════════════════════════════════════════
     combos {
         compatible = "zmk,combos";
 
+        // 输入法组合键 - 用于切换输入法或输入数字
+        // 按键位置21+50 → 数字2
         ime_2a_r {
             bindings = <&kp N2>;
             key-positions = <21 50>;
             layers = <0>;
         };
 
+        // 按键位置21+51 → 数字2
         ime_2b_r {
             bindings = <&kp N2>;
             key-positions = <21 51>;
             layers = <0>;
         };
 
+        // 按键位置22+50 → 数字3
         ime_3a_r {
             bindings = <&kp N3>;
             key-positions = <22 50>;
             layers = <0>;
         };
 
+        // 按键位置50+23 → 数字4
         ime_4a_r {
             bindings = <&kp N4>;
             key-positions = <50 23>;
             layers = <0>;
         };
 
+        // 按键位置21+49 → 数字5
         ime_5_r {
             bindings = <&kp N5>;
             key-positions = <21 49>;
             layers = <0>;
         };
 
+        // 按键位置49+22 → 数字6
         ime_6_r {
             bindings = <&kp N6>;
             key-positions = <49 22>;
             layers = <0>;
         };
 
+        // 按键位置49+23 → 数字7
         ime_7_r {
             bindings = <&kp N7>;
             key-positions = <49 23>;
             layers = <0>;
         };
 
+        // 按键位置22+51 → 数字3
         ime_3b_r {
             bindings = <&kp N3>;
             key-positions = <22 51>;
             layers = <0>;
         };
 
+        // 按键位置23+49 → 数字4
         ime_4b_r {
             bindings = <&kp N4>;
             key-positions = <23 49>;
@@ -300,9 +340,15 @@
         };
     };
 
+    // ═══════════════════════════════════════════════════════════════
+    // 键位图 (KEYMAP)
+    // ═══════════════════════════════════════════════════════════════
     keymap {
         compatible = "zmk,keymap";
 
+        // ═══════════════════════════════════════════════════════════════
+        // 基础层 - QWERTY标准键盘布局
+        // ═══════════════════════════════════════════════════════════════
         default_layer {
             display-name = "QWERTY";
             bindings = <
@@ -312,9 +358,13 @@
 &kp LCTRL    &kp LEFT_ALT  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_minus_left  &td_equal_down    &td_enter_right_grave
             >;
 
+            // 传感器绑定：旋转编码器上下/左右
             sensor-bindings = <&inc_dec_kp DOWN UP>, <&inc_dec_kp LEFT RIGHT>;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 数字层 - 数字和符号输入
+        // ═══════════════════════════════════════════════════════════════
         NUMBER_layer {
             display-name = "NUMBER";
             bindings = <
@@ -324,9 +374,13 @@
 &kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI DELETE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &kp RS(RGUI)  &kp LEFT        &kp RIGHT
             >;
 
+            // 传感器绑定：BLE编码器切换蓝牙设备，旋转上下选择
             sensor-bindings = <&BLE_encoder>, <&inc_dec_kp UP DOWN>;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 功能层 - F键和系统控制
+        // ═══════════════════════════════════════════════════════════════
         FUNCTION_layer {
             display-name = "FUNC";
             bindings = <
@@ -336,11 +390,15 @@
 &kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &kp ESCAPE       &kp RGUI                &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN  &kp RIGHT
             >;
 
+            // 传感器绑定：旋转调节音量和亮度
             sensor-bindings =
                 <&inc_dec_kp LC(C_VOLUME_UP) LC(C_VOLUME_DOWN)>,
                 <&inc_dec_kp C_BRI_DEC C_BRI_UP>;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 鼠标层 - 鼠标模拟控制
+        // ═══════════════════════════════════════════════════════════════
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
@@ -351,6 +409,9 @@
             >;
         };
 
+        // ═══════════════════════════════════════════════════════════════
+        // 预留层 - 空白占位
+        // ═══════════════════════════════════════════════════════════════
         RES_layer {
             display-name = "RESERVE";
             bindings = <
