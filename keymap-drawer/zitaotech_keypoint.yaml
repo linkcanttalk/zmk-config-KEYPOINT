@@ -221,7 +221,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - '&mkp MB1'
-  - '&td_scrollLclk_lclk'
+  - '&mkp MB1'
   - '&mkp MB1'
   - {t: SPACE, h: RGUI}
   - ''
