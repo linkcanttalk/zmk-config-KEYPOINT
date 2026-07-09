@@ -26,7 +26,7 @@ layers:
   - K
   - L
   - '&td_semi_dquotes'
-  - ENTER
+  - {t: ENTER, h: RSHFT}
   - LSHFT
   - Z
   - X
@@ -56,7 +56,7 @@ layers:
   - END
   - '&td_minus_left'
   - '&td_equal_down'
-  - '&td_enter_right_grave'
+  - '&td_grave_right'
   NUMBER:
   - ESC
   - '&td_dShft_1'
@@ -80,10 +80,10 @@ layers:
   - ''
   - Ctl+LEFT
   - Ctl+RIGHT
-  - ''
-  - ''
+  - (
+  - )
   - '&td_dShft_sqt'
-  - ENTER
+  - {t: ENTER, h: RSHIFT}
   - LSHFT
   - '&td_dShft_7'
   - '&td_dShft_8'
@@ -99,7 +99,7 @@ layers:
   - '&td_dShft_lbkt'
   - '&td_dShft_rbkt'
   - '&td_dShft_bslh'
-  - RSHFT
+  - {t: ENTER, h: RSHFT}
   - LCTRL
   - LEFT ALT
   - '&td_dShft_0'
@@ -117,7 +117,7 @@ layers:
   FUNC:
   - ESC
   - F1
-  - '&td_up_f2'
+  - {t: UP, h: F2}
   - F3
   - F4
   - F5
@@ -140,7 +140,7 @@ layers:
   - ''
   - ''
   - ''
-  - ENTER
+  - {t: ENTER, h: RSHFT}
   - LSHFT
   - ''
   - ''
@@ -156,7 +156,7 @@ layers:
   - Gui+[
   - Gui+]
   - UP
-  - RSHFT
+  - {t: ENTER, h: RSHFT}
   - LCTRL
   - LEFT ALT
   - {type: held}
@@ -218,8 +218,8 @@ layers:
   - LEFT ALT
   - ''
   - ''
-  - {t: SPACE, h: LGUI}
-  - {t: SPACE, h: LGUI}
+  - LGUI
+  - LGUI
   - '&mkp MB1'
   - '&mkp MB1'
   - '&mkp MB1'
