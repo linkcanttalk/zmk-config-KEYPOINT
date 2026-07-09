@@ -453,9 +453,9 @@
             display-name = "MOUSE";
             bindings = <
 &kp ESC    &kp HOME      &kp UP    &kp END    &none           &none           &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
-&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none           &none           &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none         &none         &kp ENTER
-&kp LSHFT  &kp Z         &kp X     &kp C      &kp V           &none           &none          &none               &none                   &none                    &kp LC(UP)  &kp LG(LBKT)  &kp LG(RBKT)  &none      &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none     &none      &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none         &none         &none
+&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none           &none           &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
+&kp LSHFT  &kp Z         &kp X     &kp C      &kp V           &none           &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none     &none      &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none     &none         &none
             >;
         };
 
