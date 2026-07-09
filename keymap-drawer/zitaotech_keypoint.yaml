@@ -153,8 +153,8 @@ layers:
   - '&bl BL_INC'
   - Ctl+UP
   - ''
-  - ''
-  - ''
+  - Gui+[
+  - Gui+]
   - UP
   - RSHFT
   - LCTRL
