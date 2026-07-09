@@ -79,13 +79,13 @@
 
         // 回车/右/反引号 - 三击舞步：回车、右箭头、反引号
 
-        td_enter_right_grave: td_enter_right_grave {
+        td_grave_right: td_grave_right {
             compatible = "zmk,behavior-tap-dance";
-            label = "TD_ENTER_RIGHT_GRAVE";
+            label = "TD_GRAVE_RIGHT";
             #binding-cells = <0>;
-            bindings = <&kp ENTER>, <&kp RIGHT>, <&kp GRAVE>;
+            bindings = <&kp GRAVE>, <&kp RIGHT>;
 
-            tapping-term-ms = <300>;
+            tapping-term-ms = <250>;
         };
 
         // 上箭头/F2 - 单击上箭头，双击F2
@@ -397,9 +397,9 @@
             display-name = "QWERTY";
             bindings = <
 &mt ESC TAB  &kp Q         &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I           &kp O           &kp P    &kp BSPC
-&kp CAPS     &kp A         &kp S  &kp D     &kp F           &kp G           &none      &none             &kp H           &kp J           &kp K    &kp L           &td_semi_dquotes  &kp ENTER
-&kp LSHFT    &kp Z         &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP    &kp N    &kp M           &td_comma_lbrc    &td_dot_rbrc           &td_fslh_up  &mt RSHFT ENTER
-&kp LCTRL    &kp LEFT_ALT  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_minus_left  &td_equal_down    &td_enter_right_grave
+&kp CAPS     &kp A         &kp S  &kp D     &kp F           &kp G           &none      &none             &kp H           &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
+&kp LSHFT    &kp Z         &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP    &kp N    &kp M           &td_comma_lbrc    &td_dot_rbrc     &td_fslh_up  &mt RSHFT ENTER
+&kp LCTRL    &kp LEFT_ALT  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_minus_left  &td_equal_down    &td_grave_right
             >;
 
             // 传感器绑定：旋转编码器上下/左右
@@ -415,14 +415,12 @@
             display-name = "NUMBER";
             bindings = <
 &kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5      &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
-&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none            &none        &none        &kp LC(LEFT)        &kp LC(RIGHT)   &none         &none         &td_dShft_sqt   &kp ENTER
-&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none            &none        &none        &none               &none           &none         &none         &td_dShft_lbkt  &td_dShft_rbkt  &td_dShft_bslh  &kp RSHFT
+&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none            &none        &none        &kp LC(LEFT)        &kp LC(RIGHT)   &kp LPAR      &kp RPAR      &td_dShft_sqt   &mt RSHIFT ENTER
+&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none            &none        &none        &none               &none           &none         &none         &td_dShft_lbkt  &td_dShft_rbkt    &td_dShft_bslh  &mt RSHFT ENTER
 &kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI DELETE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &kp RS(RGUI)  &kp LEFT        &kp RIGHT
             >;
 
             // 传感器绑定：BLE编码器切换蓝牙设备，旋转上下选择
-
-            sensor-bindings = <&BLE_encoder>, <&inc_dec_kp UP DOWN>;
         };
 
         // ═══════════════════════════════════════════════════════════════
@@ -432,9 +430,9 @@
         FUNCTION_layer {
             display-name = "FUNC";
             bindings = <
-&kp ESC    &kp F1        &td_up_f2  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
-&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none         &kp ENTER
-&kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &bl BL_DEC              &bl BL_INC         &kp LC(UP)     &none          &kp LG(LBKT)  &kp LG(RBKT)  &kp UP  &kp RSHFT
+&kp ESC    &kp F1        &mt F2 UP  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
+&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none         &mt RSHFT ENTER
+&kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &bl BL_DEC              &bl BL_INC         &kp LC(UP)     &none          &kp LG(LBKT)  &kp LG(RBKT)     &kp UP  &mt RSHFT ENTER
 &kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &kp ESCAPE       &kp RGUI                &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN      &kp RIGHT
             >;
 
@@ -452,10 +450,10 @@
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC    &kp HOME      &kp UP    &kp END    &none           &none           &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
-&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none           &none           &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
-&kp LSHFT  &kp Z         &kp X     &kp C      &kp V           &none           &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none     &none      &mt LGUI SPACE  &mt LGUI SPACE  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none     &none         &none
+&kp ESC    &kp HOME      &kp UP    &kp END    &none     &none     &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
+&kp CAPS   &kp LEFT      &kp DOWN  &kp RIGHT  &none     &none     &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
+&kp LSHFT  &kp Z         &kp X     &kp C      &kp V     &none     &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none     &none      &kp LGUI  &kp LGUI  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &mt RGUI SPACE           &none       &none     &none         &none
             >;
         };
 
