@@ -89,14 +89,6 @@
         };
 
         // 上箭头/F2 - 单击上箭头，双击F2
-
-        td_up_f2: td_up_f2 {
-            compatible = "zmk,behavior-tap-dance";
-            label = "TD_UP_F2";
-            #binding-cells = <0>;
-            bindings = <&kp UP_ARROW>, <&kp F2>;
-        };
-
         // 符号点击舞步
         // 分号/双引号 - 单击分号，双击双引号
 
