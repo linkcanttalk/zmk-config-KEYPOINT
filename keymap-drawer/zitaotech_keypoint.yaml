@@ -78,8 +78,8 @@ layers:
   - ''
   - ''
   - ''
-  - Ctl+LEFT
-  - Ctl+RIGHT
+  - KP PLUS
+  - KP MINUS
   - (
   - )
   - '&td_dShft_sqt'
@@ -94,8 +94,8 @@ layers:
   - ''
   - ''
   - ''
-  - ''
-  - ''
+  - KP MULTIPLY
+  - KP DIVIDE
   - '&td_dShft_lbkt'
   - '&td_dShft_rbkt'
   - '&td_dShft_bslh'
@@ -109,7 +109,7 @@ layers:
   - {t: ENTER, type: held}
   - ENTER
   - {t: BACKSPACE, h: RGUI}
-  - {t: SPACE, h: RGUI}
+  - {t: KP EQUAL, h: RGUI}
   - OUT TOG
   - Sft+RGUI
   - LEFT
