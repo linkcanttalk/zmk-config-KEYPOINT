@@ -406,10 +406,10 @@
         NUMBER_layer {
             display-name = "NUMBER";
             bindings = <
-&kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5      &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9     &td_dShft_0   &kp DEL
-&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none            &none        &none        &kp LC(LEFT)        &kp LC(RIGHT)   &kp LPAR      &kp RPAR      &td_dShft_sqt   &mt RSHIFT ENTER
-&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none            &none        &none        &none               &none           &none         &none         &td_dShft_lbkt  &td_dShft_rbkt    &td_dShft_bslh  &mt RSHFT ENTER
-&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI DELETE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI SPACE  &out OUT_TOG  &kp RS(RGUI)  &kp LEFT        &kp RIGHT
+&kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5      &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9        &td_dShft_0      &kp DEL
+&kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none            &none        &none        &kp KP_PLUS         &kp KP_MINUS       &kp LPAR         &kp RPAR       &td_dShft_sqt   &mt RSHIFT ENTER
+&kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none            &none        &none        &none               &none              &kp KP_MULTIPLY  &kp KP_DIVIDE  &td_dShft_lbkt  &td_dShft_rbkt    &td_dShft_bslh  &mt RSHFT ENTER
+&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI DELETE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI KP_EQUAL  &out OUT_TOG     &kp RS(RGUI)   &kp LEFT        &kp RIGHT
             >;
 
             // 传感器绑定：BLE编码器切换蓝牙设备，旋转上下选择
