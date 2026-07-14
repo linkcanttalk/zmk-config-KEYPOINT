@@ -127,42 +127,53 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
-    lv_draw_rect_dsc_t rect_white_dsc;
-    init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
-    lv_draw_arc_dsc_t arc_dsc;
-    init_arc_dsc(&arc_dsc, LVGL_FOREGROUND, 2);
-    lv_draw_arc_dsc_t arc_dsc_filled;
-    init_arc_dsc(&arc_dsc_filled, LVGL_FOREGROUND, 9);
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t label_dsc_black;
     init_label_dsc(&label_dsc_black, LVGL_BACKGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
 
-    // 填充背景
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
-    // 调整后四个圆位置：整体下移 5 像素
-    int circle_offsets[4][2] = {
-        {18, 15}, // 原18,18 -> y+5
-        {50, 15}, // 原50,18 -> y+5
-        {18, 46}, // 原18,50 -> y+5
-        {50, 46}, // 原50,50 -> y+5
-    };
+    int box_w = 18;
+    int normal_h = 22;
+    int selected_h = 24;
+    int y_center = 46;
+    int text_margin_bottom = 3;
+    int font_height = 18;
 
     for (int i = 0; i < 4; i++) {
         bool selected = i == state->active_profile_index;
+        int h = selected ? selected_h : normal_h;
+        int x = i * box_w;
+        int y = y_center - h / 2;
 
-        lv_canvas_draw_arc(canvas, circle_offsets[i][0], circle_offsets[i][1], 13, 0, 360,
-                           &arc_dsc);
+        lv_draw_rect_dsc_t rect_dsc;
+        lv_draw_rect_dsc_init(&rect_dsc);
 
         if (selected) {
-            lv_canvas_draw_arc(canvas, circle_offsets[i][0], circle_offsets[i][1], 9, 0, 359,
-                               &arc_dsc_filled);
+            rect_dsc.bg_color = LVGL_FOREGROUND;
+            rect_dsc.bg_opa = LV_OPA_COVER;
+            rect_dsc.radius = 4;
+            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
+        } else {
+            rect_dsc.bg_opa = LV_OPA_TRANSP;
+            rect_dsc.border_color = LVGL_FOREGROUND;
+            rect_dsc.border_width = 2;
+            rect_dsc.radius = 3;
+            if (i == 0) {
+                rect_dsc.border_side = LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
+            } else if (i == 3) {
+                rect_dsc.border_side = LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
+            } else {
+                rect_dsc.border_side = LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
+            }
+            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
         }
 
         char label[2];
         snprintf(label, sizeof(label), "%d", i + 1);
-        lv_canvas_draw_text(canvas, circle_offsets[i][0] - 8, circle_offsets[i][1] - 10, 16,
+        int text_y = y + h - text_margin_bottom - font_height;
+        lv_canvas_draw_text(canvas, x, text_y, box_w,
                             (selected ? &label_dsc_black : &label_dsc), label);
     }
 
