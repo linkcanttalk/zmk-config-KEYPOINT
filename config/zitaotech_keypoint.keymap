@@ -298,6 +298,15 @@
             #binding-cells = <0>;
             bindings = <&kp LCTRL>, <&kp GLOBE>;
         };
+
+        ht_kp_mkp: ht_kp_mkp {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HT_KP_MKP";
+            bindings = <&kp>, <&mkp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+        };
     };
 
     // ═══════════════════════════════════════════════════════════════
@@ -451,10 +460,10 @@
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC    &kp Q         &kp W  &none  &none            &kp T     &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
-&kp CAPS   &kp A         &kp S  &none  &ht_none_kp 0 F  &none     &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
-&kp LSHFT  &kp Z         &kp X  &kp C  &kp V            &none     &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
-&kp LCTRL  &kp LEFT_ALT  &none  &none  &kp LGUI         &kp LGUI  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &none                    &none       &none     &none         &none
+&kp ESC    &kp Q         &kp W  &none  &none            &kp T                &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
+&kp CAPS   &kp A         &kp S  &none  &ht_none_kp 0 F  &none                &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
+&kp LSHFT  &kp Z         &kp X  &kp C  &kp V            &none                &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
+&kp LCTRL  &kp LEFT_ALT  &none  &none  &mkp MB1         &ht_kp_mkp LGUI MB1  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &none                    &none       &none     &none         &none
             >;
         };
 
