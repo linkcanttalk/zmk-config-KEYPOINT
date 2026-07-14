@@ -171,8 +171,63 @@ layers:
   - LEFT
   - DOWN
   - RIGHT
-  MOUSE: [ESC, Q, W, '', '', T, '&td_rclk_mclk', ESC, '', '', '', BSPC, CAPS, A, S, '', F, '', Ctl+UP, '', Ctl+LEFT, Ctl+RIGHT, '', '', '', ENTER, LSHFT, Z, X, C,
-    V, '', '', '', '', '', Ctl+UP, '', 'Gui+[', 'Gui+]', '', RSHFT, LCTRL, LEFT ALT, '', '', LGUI, LGUI, '&mkp MB1', '&mkp MB1', '&mkp MB1', '', '', '', '', '']
+  MOUSE:
+  - ESC
+  - Q
+  - W
+  - ''
+  - ''
+  - T
+  - '&td_rclk_mclk'
+  - ESC
+  - ''
+  - ''
+  - ''
+  - BSPC
+  - CAPS
+  - A
+  - S
+  - ''
+  - F
+  - ''
+  - Ctl+UP
+  - ''
+  - Ctl+LEFT
+  - Ctl+RIGHT
+  - ''
+  - ''
+  - ''
+  - ENTER
+  - LSHFT
+  - Z
+  - X
+  - C
+  - V
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - Ctl+UP
+  - ''
+  - Gui+[
+  - Gui+]
+  - ''
+  - RSHFT
+  - LCTRL
+  - LEFT ALT
+  - ''
+  - ''
+  - '&mkp MB1'
+  - {t: '&mkp MB1', h: LGUI}
+  - '&mkp MB1'
+  - '&mkp MB1'
+  - '&mkp MB1'
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
   RESERVE: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 combos:
