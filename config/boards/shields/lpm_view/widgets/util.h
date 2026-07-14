@@ -7,6 +7,7 @@
 
 #include <lvgl.h>
 #include <zmk/endpoints.h>
+#include "vibe_coding_service.h"
 
 #define CANVAS_SIZE 72
 
@@ -26,6 +27,7 @@ struct status_state {
     uint8_t layer_index;
     const char *layer_label;
     uint8_t wpm[10];
+    enum vibe_coding_state vibe_state;
 #else
     bool connected;
 #endif
