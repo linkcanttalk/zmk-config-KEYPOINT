@@ -122,6 +122,77 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     rotate_canvas(canvas, cbuf);
 }
 
+static void draw_dashed_rect(lv_obj_t *canvas, int x, int y, int w, int h,
+                              int border_w, int dash, int gap) {
+    lv_draw_line_dsc_t line_dsc;
+    init_line_dsc(&line_dsc, LVGL_FOREGROUND, border_w);
+    int pat = dash + gap;
+
+    for (int p = 0; p < w; p += pat) {
+        int end = p + dash < w ? p + dash : w;
+        lv_point_t pts[2] = {{x + p, y}, {x + end, y}};
+        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
+    }
+    for (int p = 0; p < w; p += pat) {
+        int end = p + dash < w ? p + dash : w;
+        lv_point_t pts[2] = {{x + p, y + h - 1}, {x + end, y + h - 1}};
+        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
+    }
+    for (int p = 0; p < h; p += pat) {
+        int end = p + dash < h ? p + dash : h;
+        lv_point_t pts[2] = {{x, y + p}, {x, y + end}};
+        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
+    }
+    for (int p = 0; p < h; p += pat) {
+        int end = p + dash < h ? p + dash : h;
+        lv_point_t pts[2] = {{x + w - 1, y + p}, {x + w - 1, y + end}};
+        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
+    }
+}
+
+static void draw_rounded_icon(lv_obj_t *canvas, int x, int y, int w, int h,
+                               const char *icon, bool invert) {
+    int font_h = lv_font_montserrat_14.line_height;
+    int icon_radius = 6;
+
+    if (invert) {
+        lv_draw_rect_dsc_t rect_dsc;
+        lv_draw_rect_dsc_init(&rect_dsc);
+        rect_dsc.bg_color = LVGL_FOREGROUND;
+        rect_dsc.bg_opa = LV_OPA_COVER;
+        rect_dsc.radius = icon_radius;
+        lv_canvas_draw_rect(canvas, x, y, w, h, &rect_dsc);
+
+        lv_draw_label_dsc_t label_dsc;
+        init_label_dsc(&label_dsc, LVGL_BACKGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
+        lv_canvas_draw_text(canvas, x, y + (h - font_h) / 2, w, &label_dsc, icon);
+    } else {
+        draw_dashed_rect(canvas, x, y, w, h, 2, 3, 4);
+
+        lv_draw_label_dsc_t label_dsc;
+        init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
+        lv_canvas_draw_text(canvas, x, y + (h - font_h) / 2, w, &label_dsc, icon);
+    }
+}
+
+static void draw_traffic_light(lv_obj_t *canvas, int x, int y, int width, int height) {
+    int gap = 6;
+    int size = (width - gap * 2) / 3;
+    int iy = y + (height - size) / 2;
+
+    int ix_left = x;
+    int ix_right = x + width - size;
+    int ix_mid = x + (width - size) / 2;
+
+    const char *icons[] = {"x", "!", ">"};
+    bool inversions[] = {false, false, true};
+
+    int ix_pos[3] = {ix_left, ix_mid, ix_right};
+    for (int i = 0; i < 3; i++) {
+        draw_rounded_icon(canvas, ix_pos[i], iy, size, size, icons[i], inversions[i]);
+    }
+}
+
 static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 1);
 
@@ -176,6 +247,12 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         lv_canvas_draw_text(canvas, x, text_y, box_w,
                             (selected ? &label_dsc_black : &label_dsc), label);
     }
+
+    int tl_width = 72;
+    int tl_height = 26;
+    int tl_x = 0;
+    int tl_y = 4;
+    draw_traffic_light(canvas, tl_x, tl_y, tl_width, tl_height);
 
     rotate_canvas(canvas, cbuf);
 }
