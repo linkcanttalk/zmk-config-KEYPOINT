@@ -40,7 +40,7 @@ layers:
   - N
   - M
   - '&td_comma_lbrc'
-  - '&td_dot_rbrc'
+  - .
   - '&td_fslh_up'
   - {t: ENTER, h: RSHFT}
   - LCTRL
