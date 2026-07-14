@@ -43,7 +43,7 @@ layers:
   - .
   - '&td_fslh_up'
   - {t: ENTER, h: RSHFT}
-  - LCTRL
+  - '&td_lcrtl_globe'
   - LEFT ALT
   - FUNC
   - HOME
