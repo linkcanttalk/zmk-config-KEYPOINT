@@ -105,7 +105,7 @@ layers:
   - '&td_dShft_0'
   - BT CLR
   - {t: SPACE, h: LGUI}
-  - {t: DELETE, h: LGUI}
+  - {t: BACKSPACE, h: LGUI}
   - {t: ENTER, type: held}
   - ENTER
   - {t: BACKSPACE, h: RGUI}
@@ -171,63 +171,8 @@ layers:
   - LEFT
   - DOWN
   - RIGHT
-  MOUSE:
-  - ESC
-  - HOME
-  - UP
-  - END
-  - ''
-  - ''
-  - '&td_rclk_mclk'
-  - ESC
-  - ''
-  - ''
-  - ''
-  - BSPC
-  - CAPS
-  - LEFT
-  - DOWN
-  - RIGHT
-  - ''
-  - ''
-  - Ctl+UP
-  - ''
-  - Ctl+LEFT
-  - Ctl+RIGHT
-  - ''
-  - ''
-  - ''
-  - ENTER
-  - LSHFT
-  - Z
-  - X
-  - C
-  - V
-  - ''
-  - ''
-  - ''
-  - ''
-  - ''
-  - Ctl+UP
-  - ''
-  - Gui+[
-  - Gui+]
-  - ''
-  - RSHFT
-  - LCTRL
-  - LEFT ALT
-  - ''
-  - ''
-  - LGUI
-  - LGUI
-  - '&mkp MB1'
-  - '&mkp MB1'
-  - '&mkp MB1'
-  - {t: SPACE, h: RGUI}
-  - ''
-  - ''
-  - ''
-  - ''
+  MOUSE: [ESC, Q, W, '', '', T, '&td_rclk_mclk', ESC, '', '', '', BSPC, CAPS, A, S, '', F, '', Ctl+UP, '', Ctl+LEFT, Ctl+RIGHT, '', '', '', ENTER, LSHFT, Z, X, C,
+    V, '', '', '', '', '', Ctl+UP, '', 'Gui+[', 'Gui+]', '', RSHFT, LCTRL, LEFT ALT, '', '', LGUI, LGUI, '&mkp MB1', '&mkp MB1', '&mkp MB1', '', '', '', '', '']
   RESERVE: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 combos:
