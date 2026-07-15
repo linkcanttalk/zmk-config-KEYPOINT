@@ -44,7 +44,7 @@ layers:
   - '&td_fslh_up'
   - {t: ENTER, h: RSHFT}
   - '&td_lcrtl_globe'
-  - LEFT ALT
+  - '&td_lalt_ralt'
   - FUNC
   - HOME
   - {t: SPACE, h: LGUI}
