@@ -122,74 +122,68 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     rotate_canvas(canvas, cbuf);
 }
 
-static void draw_dashed_rect(lv_obj_t *canvas, int x, int y, int w, int h,
-                              int border_w, int dash, int gap) {
-    lv_draw_line_dsc_t line_dsc;
-    init_line_dsc(&line_dsc, LVGL_FOREGROUND, border_w);
-    int pat = dash + gap;
-
-    for (int p = 0; p < w; p += pat) {
-        int end = p + dash < w ? p + dash : w;
-        lv_point_t pts[2] = {{x + p, y}, {x + end, y}};
-        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
-    }
-    for (int p = 0; p < w; p += pat) {
-        int end = p + dash < w ? p + dash : w;
-        lv_point_t pts[2] = {{x + p, y + h - 1}, {x + end, y + h - 1}};
-        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
-    }
-    for (int p = 0; p < h; p += pat) {
-        int end = p + dash < h ? p + dash : h;
-        lv_point_t pts[2] = {{x, y + p}, {x, y + end}};
-        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
-    }
-    for (int p = 0; p < h; p += pat) {
-        int end = p + dash < h ? p + dash : h;
-        lv_point_t pts[2] = {{x + w - 1, y + p}, {x + w - 1, y + end}};
-        lv_canvas_draw_line(canvas, pts, 2, &line_dsc);
-    }
-}
-
 static void draw_rounded_icon(lv_obj_t *canvas, int x, int y, int w, int h,
-                               const char *icon, bool invert) {
-    int font_h = lv_font_montserrat_14.line_height;
-    int icon_radius = 6;
+                               const char *icon, bool invert, const lv_font_t *font,
+                               int x_offset, int y_offset) {
+    int font_h = font->line_height;
+    int cx = x + w / 2;
+    int cy = y + h / 2;
+    int r = w / 2;
 
     if (invert) {
         lv_draw_rect_dsc_t rect_dsc;
         lv_draw_rect_dsc_init(&rect_dsc);
         rect_dsc.bg_color = LVGL_FOREGROUND;
         rect_dsc.bg_opa = LV_OPA_COVER;
-        rect_dsc.radius = icon_radius;
+        rect_dsc.radius = r;
         lv_canvas_draw_rect(canvas, x, y, w, h, &rect_dsc);
 
         lv_draw_label_dsc_t label_dsc;
-        init_label_dsc(&label_dsc, LVGL_BACKGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
-        lv_canvas_draw_text(canvas, x, y + (h - font_h) / 2, w, &label_dsc, icon);
+        init_label_dsc(&label_dsc, LVGL_BACKGROUND, font, LV_TEXT_ALIGN_CENTER);
+        lv_canvas_draw_text(canvas, x + x_offset, y + (h - font_h) / 2 + y_offset, w, &label_dsc, icon);
     } else {
-        draw_dashed_rect(canvas, x, y, w, h, 2, 3, 4);
+        lv_draw_arc_dsc_t arc_dsc;
+        lv_draw_arc_dsc_init(&arc_dsc);
+        arc_dsc.color = LVGL_FOREGROUND;
+        arc_dsc.width = 2;
+        lv_canvas_draw_arc(canvas, cx, cy, r, 0, 360, &arc_dsc);
 
         lv_draw_label_dsc_t label_dsc;
-        init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
-        lv_canvas_draw_text(canvas, x, y + (h - font_h) / 2, w, &label_dsc, icon);
+        init_label_dsc(&label_dsc, LVGL_FOREGROUND, font, LV_TEXT_ALIGN_CENTER);
+        lv_canvas_draw_text(canvas, x + x_offset, y + (h - font_h) / 2 + y_offset, w, &label_dsc, icon);
     }
 }
 
-static void draw_traffic_light(lv_obj_t *canvas, int x, int y, int width, int height) {
-    int gap = 6;
-    int size = (width - gap * 2) / 3;
+static void draw_traffic_light(lv_obj_t *canvas, int x, int y, int width, int height,
+                               enum vibe_coding_state vibe_state, bool timeout) {
+    int padding = 1;
+    int gap = 2;
+    int size = (width - padding * 2 - gap * 2) / 3;
     int iy = y + (height - size) / 2;
 
-    int ix_left = x;
-    int ix_right = x + width - size;
+    int ix_left = x + padding;
+    int ix_right = x + width - padding - size;
     int ix_mid = x + (width - size) / 2;
 
     const char *icons[] = {"x", "!", ">"};
-    bool inversions[] = {false, false, true};
+    const lv_font_t *fonts[] = {&lv_font_montserrat_18, &lv_font_montserrat_14, &lv_font_montserrat_22};
+    const int x_offsets[] = {0, 0, 2};
+    const int y_offsets[] = {-2, 0, -1};
+    bool inversions[] = {false, false, false};
+
+    if (timeout) {
+        inversions[0] = inversions[1] = inversions[2] = true;
+    } else if (vibe_state == VIBE_CODING_RUNNING) {
+        inversions[2] = true;
+    } else if (vibe_state == VIBE_CODING_WARNING) {
+        inversions[1] = true;
+    } else if (vibe_state == VIBE_CODING_CRITICAL) {
+        inversions[0] = true;
+    }
 
     int ix_pos[3] = {ix_left, ix_mid, ix_right};
     for (int i = 0; i < 3; i++) {
-        draw_rounded_icon(canvas, ix_pos[i], iy, size, size, icons[i], inversions[i]);
+        draw_rounded_icon(canvas, ix_pos[i], iy, size, size, icons[i], inversions[i], fonts[i], x_offsets[i], y_offsets[i]);
     }
 }
 
@@ -249,10 +243,11 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     }
 
     int tl_width = 72;
-    int tl_height = 26;
+    int tl_height = 30;
     int tl_x = 0;
-    int tl_y = 4;
-    draw_traffic_light(canvas, tl_x, tl_y, tl_width, tl_height);
+    int tl_y = 2;
+    draw_traffic_light(canvas, tl_x, tl_y, tl_width, tl_height, state->vibe_state,
+                       state->vibe_timeout);
 
     rotate_canvas(canvas, cbuf);
 }
@@ -324,6 +319,7 @@ static void set_output_status(struct zmk_widget_status *widget,
     widget->state.active_profile_index = state->active_profile_index;
     widget->state.active_profile_connected = state->active_profile_connected;
     widget->state.active_profile_bonded = state->active_profile_bonded;
+    widget->state.vibe_timeout = false;
 
     draw_top(widget->obj, widget->cbuf, &widget->state);
     draw_middle(widget->obj, widget->cbuf2, &widget->state);
@@ -395,8 +391,17 @@ struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
 };
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_wpm_status, struct wpm_status_state, wpm_status_update_cb,
-                            wpm_status_get_state)
+                             wpm_status_get_state)
 ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
+
+static void vibe_coding_state_changed(enum vibe_coding_state state) {
+    struct zmk_widget_status *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        widget->state.vibe_state = state;
+        widget->state.vibe_timeout = vibe_coding_service_peek_timeout();
+        draw_middle(widget->obj, widget->cbuf2, &widget->state);
+    }
+}
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
@@ -420,6 +425,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_output_status_init();
     widget_layer_status_init();
     widget_wpm_status_init();
+    vibe_coding_service_init(vibe_coding_state_changed);
 
     return 0;
 }
