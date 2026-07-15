@@ -28,6 +28,7 @@ struct status_state {
     const char *layer_label;
     uint8_t wpm[10];
     enum vibe_coding_state vibe_state;
+    bool vibe_timeout;
 #else
     bool connected;
 #endif

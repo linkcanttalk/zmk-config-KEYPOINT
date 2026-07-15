@@ -68,6 +68,7 @@ static const struct device *const led_dev = DEVICE_DT_GET(DT_CHOSEN(zmk_trackpad
                        LED_OFF_200MS, LED_OFF_200MS, LED_OFF_200MS, \
                        LED_OFF_200MS
 #define LED_FLASH_3X   BRT_MAX, 0, BRT_MAX, 0, BRT_MAX, 0
+#define LED_FLASH_6X   LED_FLASH_3X, LED_FLASH_3X
 #define LED_ON_100MS   BRT_MAX, BRT_MAX, BRT_MAX, BRT_MAX, BRT_MAX, \
                        BRT_MAX, BRT_MAX, BRT_MAX, BRT_MAX, BRT_MAX
 
@@ -79,6 +80,7 @@ enum vc_effect_type {
     VC_EFFECT_WARNING,
     VC_EFFECT_RUNNING,
     VC_EFFECT_IDLE_TRANSITION,
+    VC_EFFECT_TIMEOUT_IDLE,
 };
 
 struct vc_effect {
@@ -155,6 +157,11 @@ static const uint8_t idle_transition_seq[] = {
     LED_OFF_2S,
 };
 
+static const uint8_t timeout_idle_flash_seq[] = {
+    LED_FLASH_6X,
+    0, 0, 0, 0, 0,
+};
+
 static const struct vc_effect critical_flash_effect = {
     .seq = critical_flash_seq, .len = ARRAY_SIZE(critical_flash_seq),
     .step_ms = 100, .repeat_count = 0,
@@ -170,6 +177,11 @@ static const struct vc_effect running_breathe_effect = {
 static const struct vc_effect idle_transition_effect = {
     .seq = idle_transition_seq, .len = ARRAY_SIZE(idle_transition_seq),
     .step_ms = 10, .repeat_count = 3,
+};
+
+static const struct vc_effect timeout_idle_flash_effect = {
+    .seq = timeout_idle_flash_seq, .len = ARRAY_SIZE(timeout_idle_flash_seq),
+    .step_ms = 100, .repeat_count = 3,
 };
 
 static uint8_t pulse_remaining = 0;
@@ -353,11 +365,12 @@ static void vibe_coding_effect_stop(void) {
 
 static const struct vc_effect *get_vc_effect(enum vc_effect_type type) {
     switch (type) {
-    case VC_EFFECT_CRITICAL:    return &critical_flash_effect;
-    case VC_EFFECT_WARNING:     return &warning_pulse_effect;
-    case VC_EFFECT_RUNNING:     return &running_breathe_effect;
+    case VC_EFFECT_CRITICAL:      return &critical_flash_effect;
+    case VC_EFFECT_WARNING:       return &warning_pulse_effect;
+    case VC_EFFECT_RUNNING:       return &running_breathe_effect;
     case VC_EFFECT_IDLE_TRANSITION: return &idle_transition_effect;
-    default:                    return NULL;
+    case VC_EFFECT_TIMEOUT_IDLE:  return &timeout_idle_flash_effect;
+    default:                      return NULL;
     }
 }
 
@@ -388,12 +401,23 @@ static void vibe_coding_effect_update(void) {
     } else if (vibe_coding_effect_active) {
         vibe_coding_effect_active = false;
         if (vc_state == VIBE_CODING_IDLE && current_layer == 0 && !capslock_on && !usb_mode) {
-            effect_start(&idle_transition_effect, VC_EFFECT_IDLE_TRANSITION);
+            if (vibe_coding_service_is_timeout()) {
+                effect_start(&timeout_idle_flash_effect, VC_EFFECT_TIMEOUT_IDLE);
+            } else {
+                effect_start(&idle_transition_effect, VC_EFFECT_IDLE_TRANSITION);
+            }
         } else {
             effect_stop();
             set_led_brightness(0);
         }
         LOG_INF("Vibe coding LED OFF");
+    } else if (vc_state == VIBE_CODING_IDLE && current_layer == 0 && !capslock_on && !usb_mode) {
+        if (vibe_coding_service_is_timeout()) {
+            pulse_stop();
+            scroll_breathing_stop();
+            effect_start(&timeout_idle_flash_effect, VC_EFFECT_TIMEOUT_IDLE);
+            LOG_INF("Vibe coding LED timeout from IDLE");
+        }
     }
 }
 

@@ -25,7 +25,6 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
 #include <zmk/wpm.h>
-#include "vibe_coding_service.h"
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -179,7 +178,7 @@ static void draw_rounded_icon(lv_obj_t *canvas, int x, int y, int w, int h,
 }
 
 static void draw_traffic_light(lv_obj_t *canvas, int x, int y, int width, int height,
-                               enum vibe_coding_state vibe_state) {
+                               enum vibe_coding_state vibe_state, bool timeout) {
     int padding = 4;
     int gap = 4;
     int size = (width - padding * 2 - gap * 2) / 3;
@@ -195,7 +194,9 @@ static void draw_traffic_light(lv_obj_t *canvas, int x, int y, int width, int he
     const int y_offsets[] = {-2, 0, -1};
     bool inversions[] = {false, false, false};
 
-    if (vibe_state == VIBE_CODING_RUNNING) {
+    if (timeout) {
+        inversions[0] = inversions[1] = inversions[2] = true;
+    } else if (vibe_state == VIBE_CODING_RUNNING) {
         inversions[2] = true;
     } else if (vibe_state == VIBE_CODING_WARNING) {
         inversions[1] = true;
@@ -268,7 +269,8 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     int tl_height = 30;
     int tl_x = 0;
     int tl_y = 2;
-    draw_traffic_light(canvas, tl_x, tl_y, tl_width, tl_height, state->vibe_state);
+    draw_traffic_light(canvas, tl_x, tl_y, tl_width, tl_height, state->vibe_state,
+                       state->vibe_timeout);
 
     rotate_canvas(canvas, cbuf);
 }
@@ -340,6 +342,7 @@ static void set_output_status(struct zmk_widget_status *widget,
     widget->state.active_profile_index = state->active_profile_index;
     widget->state.active_profile_connected = state->active_profile_connected;
     widget->state.active_profile_bonded = state->active_profile_bonded;
+    widget->state.vibe_timeout = false;
 
     draw_top(widget->obj, widget->cbuf, &widget->state);
     draw_middle(widget->obj, widget->cbuf2, &widget->state);
@@ -418,6 +421,7 @@ static void vibe_coding_state_changed(enum vibe_coding_state state) {
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         widget->state.vibe_state = state;
+        widget->state.vibe_timeout = vibe_coding_service_peek_timeout();
         draw_middle(widget->obj, widget->cbuf2, &widget->state);
     }
 }
