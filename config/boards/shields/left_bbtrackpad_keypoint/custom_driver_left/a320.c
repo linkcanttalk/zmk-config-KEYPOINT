@@ -72,20 +72,39 @@ static struct k_work_q a320_workq;
 #define MOUSE_ACCEL_LOW_MIN 0.9f
 #define MOUSE_RESIDUAL_DECAY 0.85f
 
+/* Precision mode acceleration (slow key pressed) */
+#define MOUSE_PRECISE_EXPONENT 1.05f
+#define MOUSE_PRECISE_MAX 28
+#define MOUSE_PRECISE_LOW_MIN 0.5f
+#define MOUSE_PRECISE_DEADZONE 2
+#define MOUSE_PRECISE_RESIDUAL_DECAY 0.75f
+
+static bool slow_key_pressed = false;
+
 static inline float apply_mouse_accel(int8_t val) {
     if (val == 0) return 0;
+
     float f = (float)val;
     float sign = (f > 0) ? 1.0f : -1.0f;
     float abs_f = (f > 0) ? f : -f;
-    float out_accel = powf(abs_f, MOUSE_ACCEL_EXPONENT);
-    float out_linear = abs_f * MOUSE_ACCEL_LOW_MIN;
+
+    if (slow_key_pressed && abs_f <= MOUSE_PRECISE_DEADZONE) {
+        return 0;
+    }
+
+    float exponent = slow_key_pressed ? MOUSE_PRECISE_EXPONENT : MOUSE_ACCEL_EXPONENT;
+    float max_out  = slow_key_pressed ? MOUSE_PRECISE_MAX : MOUSE_ACCEL_MAX;
+    float low_min  = slow_key_pressed ? MOUSE_PRECISE_LOW_MIN : MOUSE_ACCEL_LOW_MIN;
+
+    float out_accel = powf(abs_f, exponent);
+    float out_linear = abs_f * low_min;
     float t = (abs_f - 1.0f) / 9.0f;
     if (t < 0) t = 0;
     if (t > 1) t = 1;
     t = t * t * (3.0f - 2.0f * t);
     float out = sign * (out_linear * (1.0f - t) + out_accel * t);
-    if (out > MOUSE_ACCEL_MAX) out = MOUSE_ACCEL_MAX;
-    if (out < -MOUSE_ACCEL_MAX) out = -MOUSE_ACCEL_MAX;
+    if (out > max_out) out = max_out;
+    if (out < -max_out) out = -max_out;
     return out;
 }
 
@@ -99,7 +118,6 @@ static inline float apply_mouse_accel(int8_t val) {
 #define A320_I2C_ADDR 0x3B
 #define A320_PACKET_LEN 3
 
-#define SLOW_KEY_MULTIPLIER 0.5f
 #define TOUCH_IDLE_TIMEOUT 50 // 30~80ms 看手感
 /* ========= Watch Dog ========= */
 static float scroll_residual_x = 0;
@@ -109,7 +127,6 @@ static uint32_t last_activity_time = 0;
 /* ========= global ========= */
 static bool scroll_key_pressed = false;
 static bool arrow_key_pressed = false;
-static bool slow_key_pressed = false;
 static bool last_scroll_key_pressed = false; // ★ NEW
 static bool last_arrow_key_pressed = false;
 uint32_t last_packet_time = 0;
@@ -437,13 +454,12 @@ static void a320_work_cb(struct k_work *work) {
             uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
             float a320_factor = 0.4f + 0.01f * a320_led_brt;
 
-            float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
+            float raw_x = apply_mouse_accel(dx) * a320_factor;
+            float raw_y = apply_mouse_accel(dy) * a320_factor;
 
-            float raw_x = apply_mouse_accel(dx) * a320_factor * slow_mult;
-            float raw_y = apply_mouse_accel(dy) * a320_factor * slow_mult;
-
-            data->mouse_residue_x = data->mouse_residue_x * MOUSE_RESIDUAL_DECAY + raw_x;
-            data->mouse_residue_y = data->mouse_residue_y * MOUSE_RESIDUAL_DECAY + raw_y;
+            float decay = slow_key_pressed ? MOUSE_PRECISE_RESIDUAL_DECAY : MOUSE_RESIDUAL_DECAY;
+            data->mouse_residue_x = data->mouse_residue_x * decay + raw_x;
+            data->mouse_residue_y = data->mouse_residue_y * decay + raw_y;
 
             int out_x = (int)data->mouse_residue_x;
             int out_y = (int)data->mouse_residue_y;
@@ -460,13 +476,12 @@ static void a320_work_cb(struct k_work *work) {
             uint8_t a320_led_brt = indicator_tp_get_last_valid_brightness();
             float a320_factor = 0.4f + 0.01f * a320_led_brt;
 
-            float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
+            float raw_x = apply_mouse_accel(dx) * a320_factor;
+            float raw_y = apply_mouse_accel(dy) * a320_factor;
 
-            float raw_x = apply_mouse_accel(dx) * a320_factor * slow_mult;
-            float raw_y = apply_mouse_accel(dy) * a320_factor * slow_mult;
-
-            data->mouse_residue_x = data->mouse_residue_x * MOUSE_RESIDUAL_DECAY + raw_x;
-            data->mouse_residue_y = data->mouse_residue_y * MOUSE_RESIDUAL_DECAY + raw_y;
+            float decay = slow_key_pressed ? MOUSE_PRECISE_RESIDUAL_DECAY : MOUSE_RESIDUAL_DECAY;
+            data->mouse_residue_x = data->mouse_residue_x * decay + raw_x;
+            data->mouse_residue_y = data->mouse_residue_y * decay + raw_y;
 
             int out_x = (int)data->mouse_residue_x;
             int out_y = (int)data->mouse_residue_y;
