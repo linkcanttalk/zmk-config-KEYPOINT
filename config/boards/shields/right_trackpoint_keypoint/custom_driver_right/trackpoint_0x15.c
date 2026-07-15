@@ -71,8 +71,6 @@ static struct k_work_q tp_workq;
 #define TRACKPOINT_PACKET_LEN 7
 #define TRACKPOINT_MAGIC_BYTE0 0x50
 
-#define SLOW_KEY_MULTIPLIER 0.5f
-
 static float scroll_residual_x = 0;
 static float scroll_residual_y = 0;
 /* ========= Watch Dog ========= */
@@ -174,27 +172,40 @@ struct trackpoint_data {
 
 /* ========= S-curve + EMA acceleration ========= */
 #ifdef CONFIG_TRACKPOINT_EXPONENTIAL
+
+/* Normal mode parameters */
 #define TP_MIN_MULT 0.5f
 #define TP_MAX_MULT 2.5f
 #define TP_SIGMOID_K 2.0f
 #define TP_EMA_ALPHA 0.3f
 
+/* Precision mode parameters (slow key pressed) */
+#define TP_PRECISE_MIN_MULT 0.2f
+#define TP_PRECISE_MAX_MULT 1.2f
+#define TP_PRECISE_SIGMOID_K 3.5f
+#define TP_PRECISE_EMA_ALPHA 0.15f
+#define TP_PRECISE_DEADZONE 2
+
 static float smoothed_speed = 0;
 
 static inline float trackpoint_exponential_factor(int8_t dx, int8_t dy, uint32_t delta_ms) {
+    float min_m = slow_key_pressed ? TP_PRECISE_MIN_MULT : TP_MIN_MULT;
+    float max_m = slow_key_pressed ? TP_PRECISE_MAX_MULT : TP_MAX_MULT;
+    float k     = slow_key_pressed ? TP_PRECISE_SIGMOID_K : TP_SIGMOID_K;
+    float alpha = slow_key_pressed ? TP_PRECISE_EMA_ALPHA : TP_EMA_ALPHA;
+
     if (delta_ms == 0)
         delta_ms = 1;
 
     int dist = abs(dx) + abs(dy);
     if (dist < 1)
-        return TP_MIN_MULT;
+        return min_m;
 
     float raw_speed = (float)dist / (float)delta_ms;
-    smoothed_speed = TP_EMA_ALPHA * raw_speed + (1.0f - TP_EMA_ALPHA) * smoothed_speed;
+    smoothed_speed = alpha * raw_speed + (1.0f - alpha) * smoothed_speed;
 
-    float sigmoid = 1.0f / (1.0f + expf(-TP_SIGMOID_K * smoothed_speed));
-    float mult = TP_MIN_MULT + (TP_MAX_MULT - TP_MIN_MULT) * sigmoid;
-    return mult;
+    float sigmoid = 1.0f / (1.0f + expf(-k * smoothed_speed));
+    return min_m + (max_m - min_m) * sigmoid;
 }
 #endif
 
@@ -382,10 +393,13 @@ static void trackpoint_work_cb(struct k_work *work) {
         float exp_mult = 1.0f;
 #endif
 
-        float slow_mult = slow_key_pressed ? SLOW_KEY_MULTIPLIER : 1.0f;
+        float fx = dx * MOUSE_BASE_SPEED * tp_factor * exp_mult;
+        float fy = dy * MOUSE_BASE_SPEED * tp_factor * exp_mult;
 
-        float fx = dx * MOUSE_BASE_SPEED * tp_factor * exp_mult * slow_mult;
-        float fy = dy * MOUSE_BASE_SPEED * tp_factor * exp_mult * slow_mult;
+        if (slow_key_pressed && abs(dx) <= TP_PRECISE_DEADZONE && abs(dy) <= TP_PRECISE_DEADZONE) {
+            fx = 0;
+            fy = 0;
+        }
 
         input_report_rel(dev, INPUT_REL_X, -(int)fx, false, K_NO_WAIT);
         input_report_rel(dev, INPUT_REL_Y, -(int)fy, true, K_NO_WAIT);
