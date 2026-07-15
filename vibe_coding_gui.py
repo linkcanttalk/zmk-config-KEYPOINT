@@ -85,6 +85,29 @@ class VibeCodingGUI:
                                         font=("Helvetica", 16, "bold"), width=12)
         self.state_indicator.pack()
 
+        # Periodic sender
+        frame_periodic = ttk.LabelFrame(self.root, text="Periodic Sender (every 2s)", padding=8)
+        frame_periodic.pack(fill="x", padx=10, pady=5)
+
+        self.periodic_state_var = tk.StringVar(value="idle")
+        periodic_combo = ttk.Combobox(
+            frame_periodic,
+            textvariable=self.periodic_state_var,
+            values=list(STATES.keys()),
+            state="readonly",
+            width=10,
+        )
+        periodic_combo.pack(side="left", padx=(0, 5))
+
+        self.periodic_start_btn = ttk.Button(frame_periodic, text="Start", command=self._periodic_start)
+        self.periodic_start_btn.pack(side="left", padx=(0, 5))
+
+        self.periodic_stop_btn = ttk.Button(frame_periodic, text="Stop", command=self._periodic_stop, state="disabled")
+        self.periodic_stop_btn.pack(side="left")
+
+        self.periodic_active = False
+        self.periodic_after_id = None
+
         # Log
         frame_log = ttk.LabelFrame(self.root, text="Log", padding=8)
         frame_log.pack(fill="both", expand=True, padx=10, pady=(5, 10))
@@ -168,6 +191,7 @@ class VibeCodingGUI:
     def _disconnect(self):
         if not self.connected:
             return
+        self._periodic_stop()
         self._log("Disconnecting...")
 
         def do():
@@ -205,6 +229,41 @@ class VibeCodingGUI:
 
     def _update_indicator(self, name):
         self.state_indicator.configure(text=name.upper())
+
+    def _periodic_start(self):
+        if not self.connected:
+            self._log("Not connected.")
+            return
+        self.periodic_active = True
+        self.periodic_start_btn.configure(state="disabled")
+        self.periodic_stop_btn.configure(state="normal")
+        self._periodic_send()
+
+    def _periodic_stop(self):
+        self.periodic_active = False
+        if self.periodic_after_id is not None:
+            self.root.after_cancel(self.periodic_after_id)
+            self.periodic_after_id = None
+        self.periodic_start_btn.configure(state="normal")
+        self.periodic_stop_btn.configure(state="disabled")
+        self._log("Periodic sender stopped.")
+
+    def _periodic_send(self):
+        if not self.periodic_active or not self.connected:
+            return
+        name = self.periodic_state_var.get()
+        value = STATES[name]
+
+        def do():
+            try:
+                self._run(self.client.write_gatt_char(CHAR_UUID, bytes([value]), response=True))
+                self.root.after(0, self._log, f"Periodic: {name.upper()} ({value})")
+                self.root.after(0, self._update_indicator, name)
+            except Exception as e:
+                self.root.after(0, self._log, f"Periodic error: {e}")
+
+        threading.Thread(target=do, daemon=True).start()
+        self.periodic_after_id = self.root.after(2000, self._periodic_send)
 
 
 def main():
