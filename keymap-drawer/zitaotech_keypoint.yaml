@@ -54,9 +54,9 @@ layers:
   - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
   - END
-  - '&td_minus_left'
-  - '&td_equal_down'
-  - '&td_grave_right'
+  - '&td_grave_left'
+  - '&td_minus_down'
+  - '&td_equal_right'
   NUMBER:
   - ESC
   - '&td_dShft_1'

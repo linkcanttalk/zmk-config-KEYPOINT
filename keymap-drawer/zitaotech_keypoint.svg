@@ -362,15 +362,15 @@ path.combo {
 </g>
 <g transform="translate(728, 203)" class="key keypos-53">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_minus_…</tspan></text>
+<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_grave_…</tspan></text>
 </g>
 <g transform="translate(784, 218)" class="key keypos-54">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_equal_…</tspan></text>
+<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_minus_…</tspan></text>
 </g>
 <g transform="translate(840, 218)" class="key keypos-55">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_grave_…</tspan></text>
+<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_equal_…</tspan></text>
 </g>
 <g class="combo combopos-0">
 <path d="M585,151 l23,-44" class="combo"/>
