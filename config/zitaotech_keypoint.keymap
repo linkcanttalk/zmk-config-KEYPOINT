@@ -136,6 +136,7 @@
             label = "TD_DSHFT_1";
             #binding-cells = <0>;
             bindings = <&kp NUMBER_1>, <&kp EXCL>;
+            tapping-term-ms = <120>;
         };
 
         // 数字2/@符号 - 单击2，双击Shift+2(@)
@@ -145,6 +146,7 @@
             label = "TD_DSHFT_2";
             #binding-cells = <0>;
             bindings = <&kp NUMBER_2>, <&kp AT>;
+            tapping-term-ms = <120>;
         };
 
         // 数字3/#符号 - 单击3，双击Shift+3(#)
@@ -154,6 +156,7 @@
             label = "TD_DSHFT_3";
             #binding-cells = <0>;
             bindings = <&kp N3>, <&kp HASH>;
+            tapping-term-ms = <120>;
         };
 
         // 数字4/$符号 - 单击4，双击Shift+4($)
@@ -163,6 +166,7 @@
             label = "TD_DSHFT_4";
             #binding-cells = <0>;
             bindings = <&kp N4>, <&kp DLLR>;
+            tapping-term-ms = <120>;
         };
 
         // 数字5/%符号 - 单击5，双击Shift+5(%)
@@ -172,6 +176,7 @@
             label = "TD_DSHFT_5";
             #binding-cells = <0>;
             bindings = <&kp N5>, <&kp PRCNT>;
+            tapping-term-ms = <120>;
         };
 
         // 数字6/^符号 - 单击6，双击Shift+6(^)
@@ -181,6 +186,7 @@
             label = "TD_DSHFT_6";
             #binding-cells = <0>;
             bindings = <&kp N6>, <&kp CARET>;
+            tapping-term-ms = <120>;
         };
 
         // 数字7/&符号 - 单击7，双击Shift+7(&)
@@ -190,6 +196,7 @@
             label = "TD_DSHFT_7";
             #binding-cells = <0>;
             bindings = <&kp N7>, <&kp AMPS>;
+            tapping-term-ms = <120>;
         };
 
         // 数字8/*符号 - 单击8，双击Shift+8(*)
@@ -199,6 +206,7 @@
             label = "TD_DSHFT_8";
             #binding-cells = <0>;
             bindings = <&kp N8>, <&kp STAR>;
+            tapping-term-ms = <120>;
         };
 
         // 数字9/左括号 - 单击9，双击Shift+9(()
@@ -208,6 +216,7 @@
             label = "TD_DSHFT_9";
             #binding-cells = <0>;
             bindings = <&kp N9>, <&kp LPAR>;
+            tapping-term-ms = <120>;
         };
 
         // 数字0/右括号 - 单击0，双击Shift+0())
@@ -217,6 +226,7 @@
             label = "TD_DSHFT_0";
             #binding-cells = <0>;
             bindings = <&kp N0>, <&kp RPAR>;
+            tapping-term-ms = <120>;
         };
 
         // 括号/符号点击舞步
@@ -227,6 +237,7 @@
             label = "TD_DSHFT_SQT";
             #binding-cells = <0>;
             bindings = <&kp SQT>, <&kp DQT>;
+            tapping-term-ms = <120>;
         };
 
         // 左方括号/左花括号 - 单击左方括号，双击左花括号
@@ -236,6 +247,7 @@
             label = "TD_DSHFT_LBKT";
             #binding-cells = <0>;
             bindings = <&kp LBKT>, <&kp LBRC>;
+            tapping-term-ms = <120>;
         };
 
         // 右方括号/右花括号 - 单击右方括号，双击右花括号
@@ -245,6 +257,7 @@
             label = "TD_DSHFT_RBKT";
             #binding-cells = <0>;
             bindings = <&kp RBKT>, <&kp RBRC>;
+            tapping-term-ms = <120>;
         };
 
         // 反斜杠/竖线 - 单击反斜杠，双击竖线
@@ -254,6 +267,7 @@
             label = "TD_DSHFT_BSLH";
             #binding-cells = <0>;
             bindings = <&kp BSLH>, <&kp PIPE>;
+            tapping-term-ms = <120>;
         };
 
         // ═══════════════════════════════════════════════════════════════
