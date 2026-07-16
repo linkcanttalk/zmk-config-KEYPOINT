@@ -50,7 +50,7 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
-  - {t: '&mkp MB1', h: FUNC}
+  - '&td_mkp_globe'
   - {t: SPACE, h: NUMBER}
   - {t: SPACE, h: RGUI}
   - END
