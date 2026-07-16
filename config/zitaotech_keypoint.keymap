@@ -57,33 +57,33 @@
 
         // 减号/左箭头 - 单击减号，双击左箭头
 
-        td_minus_left: td_minus_left {
+        td_grave_left: td_grave_left {
             compatible = "zmk,behavior-tap-dance";
-            label = "TD_MINUS_LEFT";
+            label = "TD_GRAVE_LEFT";
             #binding-cells = <0>;
-            bindings = <&kp MINUS>, <&kp LEFT>;
+            bindings = <&kp GRAVE>, <&kp LEFT>;
 
             tapping-term-ms = <250>;
         };
 
         // 等号/下箭头 - 单击等号，双击下箭头
 
-        td_equal_down: td_equal_down {
+        td_minus_down: td_minus_down {
             compatible = "zmk,behavior-tap-dance";
-            label = "TD_EQUAL_DOWN";
+            label = "TD_MINUS_DOWN";
             #binding-cells = <0>;
-            bindings = <&kp EQUAL>, <&kp DOWN>;
+            bindings = <&kp MINUS>, <&kp DOWN>;
 
             tapping-term-ms = <250>;
         };
 
         // 回车/右/反引号 - 三击舞步：回车、右箭头、反引号
 
-        td_grave_right: td_grave_right {
+        td_equal_right: td_equal_right {
             compatible = "zmk,behavior-tap-dance";
-            label = "TD_GRAVE_RIGHT";
+            label = "TD_EQUAL_RIGHT";
             #binding-cells = <0>;
-            bindings = <&kp GRAVE>, <&kp RIGHT>;
+            bindings = <&kp EQUAL>, <&kp RIGHT>;
 
             tapping-term-ms = <250>;
         };
@@ -423,7 +423,7 @@
 &mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I           &kp O           &kp P    &kp BSPC
 &kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &none      &none             &kp H           &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
 &kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP    &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
-&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_minus_left  &td_equal_down    &td_grave_right
+&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
             >;
 
             // 传感器绑定：旋转编码器上下/左右
