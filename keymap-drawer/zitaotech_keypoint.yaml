@@ -52,7 +52,7 @@ layers:
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
   - {t: SPACE, h: NUMBER}
-  - '&td_space_globe_caps'
+  - '&td_spacergui_globe_caps'
   - END
   - '&td_grave_left'
   - '&td_minus_down'
