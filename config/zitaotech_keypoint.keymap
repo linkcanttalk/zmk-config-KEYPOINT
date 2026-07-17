@@ -352,16 +352,25 @@
             bindings = <&ht_kp_kp LALT LALT>, <&ht_kp_kp RALT RALT>;
         };
 
-        td_mkp_globe: td_mkp_globe {
+        td_space_globe_caps: td_space_globe_caps {
             compatible = "zmk,behavior-tap-dance";
-            label = "TD_MKP_GLOBE";
+            label = "TD_SPACE_GLOBE_CAPS";
             #binding-cells = <0>;
             bindings =
-                <&ht_mo_mkp 2 MB1>,
-                <&ht_none_kp 0 GLOBE>,
-                <&kp CAPSLOCK>;
+                <&ht_kp_kp RGUI SPACE>,
+                <&ht_kp_none GLOBE 0>,
+                <&ht_none_kp 0 CAPSLOCK>;
 
             tapping-term-ms = <150>;
+        };
+
+        ht_kp_none: ht_kp_none {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HT_KP_NONE";
+            bindings = <&kp>, <&none>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
         };
     };
 
@@ -460,10 +469,10 @@
         default_layer {
             display-name = "QWERTY";
             bindings = <
-&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U          &kp I           &kp O           &kp P    &kp BSPC
-&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &none      &none          &kp H           &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
-&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP      &msc SCRL_DOWN  &msc SCRL_UP    &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
-&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &td_mkp_globe  &lt 1 SPACE     &mt RGUI SPACE  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
+&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I           &kp O                 &kp P    &kp BSPC
+&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &none      &none             &kp H           &kp J                 &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
+&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP          &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
+&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &td_space_globe_caps  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
             >;
 
             // 传感器绑定：旋转编码器上下/左右
