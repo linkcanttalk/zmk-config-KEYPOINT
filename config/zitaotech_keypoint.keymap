@@ -356,7 +356,10 @@
             compatible = "zmk,behavior-tap-dance";
             label = "TD_MKP_GLOBE";
             #binding-cells = <0>;
-            bindings = <&ht_mo_mkp 2 MB1>, <&ht_none_kp 0 GLOBE>;
+            bindings =
+                <&ht_mo_mkp 2 MB1>,
+                <&ht_none_kp 0 GLOBE>,
+                <&kp CAPSLOCK>;
 
             tapping-term-ms = <150>;
         };
