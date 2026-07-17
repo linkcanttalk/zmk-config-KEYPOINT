@@ -50,9 +50,9 @@ layers:
   - {t: SPACE, h: LGUI}
   - {t: SPACE, h: LGUI}
   - {t: ESC, h: NUMBER}
-  - '&td_mkp_globe'
+  - {t: '&mkp MB1', h: FUNC}
   - {t: SPACE, h: NUMBER}
-  - {t: SPACE, h: RGUI}
+  - '&td_space_globe_caps'
   - END
   - '&td_grave_left'
   - '&td_minus_down'
