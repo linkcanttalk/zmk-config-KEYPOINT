@@ -19,7 +19,7 @@ layers:
   - D
   - F
   - G
-  - ''
+  - {t: GLOBE, h: toggle}
   - ''
   - H
   - J
@@ -35,8 +35,8 @@ layers:
   - B
   - PG DN
   - PG UP
-  - '&msc SCRL_DOWN'
-  - '&msc SCRL_UP'
+  - GLOBE
+  - {t: GLOBE, h: toggle}
   - N
   - M
   - '&td_comma_lbrc'
@@ -52,7 +52,7 @@ layers:
   - {t: ESC, h: NUMBER}
   - {t: '&mkp MB1', h: FUNC}
   - {t: SPACE, h: NUMBER}
-  - '&td_spacergui_globe_caps'
+  - {t: SPACE, h: LGUI}
   - END
   - '&td_grave_left'
   - '&td_minus_down'
@@ -190,7 +190,7 @@ layers:
   - ''
   - F
   - ''
-  - Ctl+UP
+  - {t: GLOBE, h: toggle}
   - ''
   - Ctl+LEFT
   - Ctl+RIGHT

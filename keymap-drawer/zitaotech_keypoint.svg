@@ -202,6 +202,8 @@ path.combo {
 </g>
 <g transform="translate(381, 91)" class="key keypos-18">
 <rect rx="6" ry="6" x="-19" y="-19" width="38" height="38" class="key"/>
+<text x="0" y="0" class="key tap">GLOBE</text>
+<text x="0" y="17" class="key hold">toggle</text>
 </g>
 <g transform="translate(487, 91)" class="key keypos-19">
 <rect rx="6" ry="6" x="-19" y="-19" width="38" height="38" class="key"/>
@@ -269,15 +271,12 @@ path.combo {
 </g>
 <g transform="translate(466, 160)" class="key keypos-34">
 <rect rx="6" ry="6" x="-19" y="-12" width="38" height="24" class="key"/>
-<text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 78%">&amp;msc</tspan><tspan x="0" dy="1.2em" style="font-size: 78%">SCRL_DOWN</tspan>
-</text>
+<text x="0" y="0" class="key tap">GLOBE</text>
 </g>
 <g transform="translate(508, 160)" class="key keypos-35">
 <rect rx="6" ry="6" x="-19" y="-12" width="38" height="24" class="key"/>
-<text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em">&amp;msc</tspan><tspan x="0" dy="1.2em">SCRL_UP</tspan>
-</text>
+<text x="0" y="0" class="key tap">GLOBE</text>
+<text x="0" y="10" class="key hold">toggle</text>
 </g>
 <g transform="translate(560, 154)" class="key keypos-36">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -353,7 +352,8 @@ path.combo {
 </a></g>
 <g transform="translate(616, 203)" class="key keypos-51">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap"><tspan style="font-size: 64%">&amp;td_spacer…</tspan></text>
+<text x="0" y="0" class="key tap">SPACE</text>
+<text x="0" y="24" class="key hold">LGUI</text>
 </g>
 <g transform="translate(672, 196)" class="key keypos-52">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -978,7 +978,8 @@ path.combo {
 </g>
 <g transform="translate(381, 91)" class="key keypos-18">
 <rect rx="6" ry="6" x="-19" y="-19" width="38" height="38" class="key"/>
-<text x="0" y="0" class="key tap">Ctl+UP</text>
+<text x="0" y="0" class="key tap">GLOBE</text>
+<text x="0" y="17" class="key hold">toggle</text>
 </g>
 <g transform="translate(487, 91)" class="key keypos-19">
 <rect rx="6" ry="6" x="-19" y="-19" width="38" height="38" class="key"/>
