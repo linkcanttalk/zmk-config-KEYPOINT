@@ -464,10 +464,10 @@
         default_layer {
             display-name = "QWERTY";
             bindings = <
-&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I           &kp O                     &kp P    &kp BSPC
-&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &none      &none             &kp H           &kp J                     &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
-&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP              &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
-&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE     &td_spacergui_globe_caps  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
+&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I        &kp O           &kp P    &kp BSPC
+&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &kt GLOBE  &none             &kp H        &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
+&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &kp GLOBE    &kt GLOBE       &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
+&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE  &mt LGUI SPACE  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
             >;
 
             // 传感器绑定：旋转编码器上下/左右
@@ -521,7 +521,7 @@
             display-name = "MOUSE";
             bindings = <
 &kp ESC    &kp Q         &kp W  &none  &none            &kp T                &td_rclk_mclk  &kp ESC             &none                   &none                    &none       &kp BSPC
-&kp CAPS   &kp A         &kp S  &none  &ht_none_kp 0 F  &none                &kp LC(UP)     &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
+&kp CAPS   &kp A         &kp S  &none  &ht_none_kp 0 F  &none                &kt GLOBE      &none               &ht_none_kp 0 LC(LEFT)  &ht_none_kp 0 LC(RIGHT)  &none       &none     &none         &kp ENTER
 &kp LSHFT  &kp Z         &kp X  &kp C  &kp V            &none                &none          &none               &none                   &none                    &kp LC(UP)  &none     &kp LG(LBKT)  &kp LG(RBKT)  &none  &kp RSHFT
 &kp LCTRL  &kp LEFT_ALT  &none  &none  &mkp MB1         &ht_kp_mkp LGUI MB1  &mkp MB1       &ht_none_mkp 0 MB1  &mkp MB1                &none                    &none       &none     &none         &none
             >;
