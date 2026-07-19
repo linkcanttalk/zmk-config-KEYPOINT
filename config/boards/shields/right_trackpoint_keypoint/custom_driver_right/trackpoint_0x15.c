@@ -344,27 +344,25 @@ static void trackpoint_work_cb(struct k_work *work) {
             data->scroll_residue_y = 0;
         }
 
-        float speed = sqrtf((float)(dx * dx + dy * dy));
-        float scale = 0.025f + 0.05f * MIN(speed / 80.0f, 1.0f);
+        float abs_dx = fabsf((float)dx);
+        float abs_dy = fabsf((float)dy);
+
+        float ty = MIN(abs_dy / 40.0f, 1.0f);
+        float scale_y = 0.015f + 0.075f * ty * ty;
+
+        float tx = MIN(abs_dx / 40.0f, 1.0f);
+        float scale_x = 0.012f + 0.038f * tx * tx * tx;
 
         static float scroll_smooth_x = 0;
         static float scroll_smooth_y = 0;
-        #define SCROLL_EMA_ALPHA 0.4f
-        #define SCROLL_X_MAX 3
-        #define SCROLL_DOMINANT_RATIO 1.5f
+        #define SCROLL_X_MAX 5
+        #define SCROLL_Y_MAX 5
 
-        scroll_smooth_x = SCROLL_EMA_ALPHA * (dx * scale) + (1.0f - SCROLL_EMA_ALPHA) * scroll_smooth_x;
-        scroll_smooth_y = SCROLL_EMA_ALPHA * (dy * scale) + (1.0f - SCROLL_EMA_ALPHA) * scroll_smooth_y;
+        scroll_smooth_x = 0.65f * (dx * scale_x) + 0.35f * scroll_smooth_x;
+        scroll_smooth_y = 0.65f * (dy * scale_y) + 0.35f * scroll_smooth_y;
 
-        bool dominant_y = fabsf(scroll_smooth_y) > fabsf(scroll_smooth_x) * SCROLL_DOMINANT_RATIO;
-        bool dominant_x = fabsf(scroll_smooth_x) > fabsf(scroll_smooth_y) * SCROLL_DOMINANT_RATIO;
-
-        if (!dominant_x) {
-            scroll_smooth_x = 0;
-        }
-        if (!dominant_y) {
-            scroll_smooth_y = 0;
-        }
+        if (fabsf(scroll_smooth_x) < 0.05f) scroll_smooth_x = 0;
+        if (fabsf(scroll_smooth_y) < 0.05f) scroll_smooth_y = 0;
 
         scroll_residual_x += scroll_smooth_x;
         scroll_residual_y += scroll_smooth_y;
@@ -374,12 +372,14 @@ static void trackpoint_work_cb(struct k_work *work) {
 
         if (out_x > SCROLL_X_MAX) out_x = SCROLL_X_MAX;
         if (out_x < -SCROLL_X_MAX) out_x = -SCROLL_X_MAX;
+        if (out_y > SCROLL_Y_MAX) out_y = SCROLL_Y_MAX;
+        if (out_y < -SCROLL_Y_MAX) out_y = -SCROLL_Y_MAX;
 
         scroll_residual_x -= out_x;
         scroll_residual_y -= out_y;
         input_report_rel(dev, INPUT_REL_HWHEEL, -out_x, false, K_FOREVER);
         input_report_rel(dev, INPUT_REL_WHEEL, out_y, true, K_FOREVER);
-        k_msleep(25);
+        k_msleep(8);
 
     } else {
 
