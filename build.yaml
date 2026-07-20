@@ -2,7 +2,7 @@
 # keyboard firmware
 include:
   - board: zitaotech_keypoint_left
-    shield: lpm_view;left_bbtrackpad_keypoint
+    shield: lpm_view;left_bbtrackpad_keypoint;raw_hid_adapter
 
   - board: zitaotech_keypoint_right
     shield: lpm_view;right_trackpoint_keypoint
@@ -10,6 +10,6 @@ include:
 
 # rest firmware
 #  - board: zitaotech_keypoint_left
-#    shield: lpm_view;left_bbtrackpad_keypoint;settings_reset
+#    shield: lpm_view;left_bbtrackpad_keypoint;raw_hid_adapter;settings_reset
 #  - board: zitaotech_keypoint_right
 #    shield: lpm_view;right_trackpoint_keypoint;settings_reset
