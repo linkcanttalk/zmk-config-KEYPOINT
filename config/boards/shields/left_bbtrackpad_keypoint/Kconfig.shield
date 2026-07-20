@@ -119,3 +119,14 @@ config CUSTOM_LED_BRT_STEP
       The amount of brightness added or subtracted per key press.
 
 endmenu
+
+
+menu "Vibe Coding Status"
+
+config VIBE_CODING_STATUS
+    bool "Enable Vibe Coding Status"
+    default y
+    help
+      Enable receiving vibe coding status from host via raw HID.
+
+endmenu
