@@ -3,7 +3,8 @@
 Send Vibe Coding Status to ZMK keyboard via Raw HID (USB or Bluetooth).
 
 Usage:
-    python3 send_vibe_status.py <status>
+    python3 send_vibe_status.py <status>          # Send once
+    python3 send_vibe_status.py <status> --loop   # Send every 2 seconds
 
 Status values:
     0 - IDLE
@@ -21,6 +22,8 @@ Note:
 """
 
 import sys
+import time
+import signal
 import hid
 
 # ZMK Raw HID settings (from Kconfig)
@@ -30,72 +33,59 @@ VIBE_CODING_STATUS_TYPE = 0xBB
 
 STATUS_NAMES = ['IDLE', 'RUNNING', 'WARNING', 'CRITICAL']
 
+# Loop interval in seconds
+LOOP_INTERVAL = 2
+
+running = True
+
+def signal_handler(sig, frame):
+    global running
+    print("\nStopping...")
+    running = False
+
 def find_keyboards():
     """Find all ZMK keyboard HID devices (USB and Bluetooth)."""
     devices = []
-    for device in hid.enumerate(USAGE_PAGE, USAGE):
-        devices.append(device)
-    # Also try searching by product name if no devices found
-    if not devices:
-        for device in hid.enumerate():
-            if 'ZMK' in device.get('product_string', '').upper() or \
-               'CORNE' in device.get('product_string', '').upper() or \
-               'KEYPOINT' in device.get('product_string', '').upper():
-                if device.get('usage_page') == USAGE_PAGE and device.get('usage') == USAGE:
-                    devices.append(device)
+    for device in hid.enumerate():
+        product = device.get('product_string', '').upper()
+        if 'ZMK' in product or 'CORNE' in product or 'KEYPOINT' in product:
+            if device.get('usage_page') == USAGE_PAGE and device.get('usage') == USAGE:
+                devices.append(device)
     return devices
 
 def send_status(status, device_path=None):
-    """Send vibe coding status to keyboard."""
-    if status < 0 or status > 3:
-        print("Error: status must be 0-3 (idle/running/warning/critical)")
-        sys.exit(1)
-
+    """Send vibe coding status to keyboard. Returns True on success."""
     devices = find_keyboards()
     if not devices:
         print("Error: no keyboard found.")
-        print("Make sure keyboard is connected via USB or paired via Bluetooth.")
-        sys.exit(1)
+        return False
 
-    # Select device
     if device_path:
         device_info = next((d for d in devices if d['path'] == device_path), None)
         if not device_info:
             print(f"Error: device not found at path {device_path}")
-            sys.exit(1)
+            return False
     elif len(devices) == 1:
         device_info = devices[0]
     else:
-        print("Multiple keyboards found:")
-        for i, dev in enumerate(devices):
-            connection = "USB" if dev['usage_page'] == USAGE_PAGE else "BT"
-            print(f"  [{i}] {dev['product_string']} ({connection})")
-        print("Using first device...")
         device_info = devices[0]
 
-    connection_type = "USB" if device_info.get('interface_number', -1) >= 0 else "Bluetooth"
-    print(f"Found keyboard: {device_info['product_string']} ({connection_type})")
-    print(f"Sending status: {STATUS_NAMES[status]}")
-
     try:
-        device = hid.Device(path=device_info['path'])
+        device = hid.device()
+        device.open_path(device_info['path'])
 
-        # Build HID report (32 bytes)
         report = [0x00] * 32
-        report[0] = 0x00  # Report ID
-        report[1] = VIBE_CODING_STATUS_TYPE  # Data type
-        report[2] = status  # Status value
+        report[0] = 0x00
+        report[1] = VIBE_CODING_STATUS_TYPE
+        report[2] = status
 
         device.write(bytes(report))
-        print("Sent successfully!")
-
+        time.sleep(0.05)
         device.close()
-    except PermissionError:
-        print("Error: permission denied. Try running with sudo (macOS) or check udev rules (Linux).")
-        sys.exit(1)
+        return True
     except Exception as e:
         print(f"Error: {e}")
-        sys.exit(1)
+        return False
 
 def list_devices():
     """List all available HID devices."""
@@ -126,4 +116,28 @@ if __name__ == "__main__":
         print("Error: status must be a number (0-3)")
         sys.exit(1)
 
-    send_status(status)
+    if status < 0 or status > 3:
+        print("Error: status must be 0-3 (idle/running/warning/critical)")
+        sys.exit(1)
+
+    loop_mode = '--loop' in sys.argv
+
+    if loop_mode:
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+        print(f"Sending {STATUS_NAMES[status]} every {LOOP_INTERVAL}s (Ctrl+C to stop)")
+        count = 0
+        while running:
+            count += 1
+            if send_status(status):
+                print(f"[{count}] Sent {STATUS_NAMES[status]}")
+            else:
+                print(f"[{count}] Failed, retrying in {LOOP_INTERVAL}s...")
+            time.sleep(LOOP_INTERVAL)
+        print("Stopped.")
+    else:
+        print(f"Sending status: {STATUS_NAMES[status]}")
+        if send_status(status):
+            print("Sent successfully!")
+        else:
+            sys.exit(1)
