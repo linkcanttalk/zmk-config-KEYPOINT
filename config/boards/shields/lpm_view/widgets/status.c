@@ -25,6 +25,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
 #include <zmk/wpm.h>
+#include <vibe_coding_status/events.h>
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -42,6 +43,10 @@ struct layer_status_state {
 
 struct wpm_status_state {
     uint8_t wpm;
+};
+
+struct vibe_coding_status_state {
+    uint8_t status;
 };
 
 static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
@@ -85,6 +90,27 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     }
 
     lv_canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
+
+    // Draw vibe coding status (before WPM chart to avoid being covered)
+    const char *vibe_text = "";
+    switch (state->vibe_coding_status) {
+    case 1:
+        vibe_text = "RUN";
+        break;
+    case 2:
+        vibe_text = "WRN";
+        break;
+    case 3:
+        vibe_text = "CRT";
+        break;
+    default:
+        vibe_text = "IDLE";
+        break;
+    }
+
+    lv_draw_label_dsc_t label_dsc_vibe;
+    init_label_dsc(&label_dsc_vibe, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_LEFT);
+    lv_canvas_draw_text(canvas, 0, 12, 30, &label_dsc_vibe, vibe_text);
 
     // Draw WPM
     lv_canvas_draw_rect(canvas, 0, 21, 70, 44, &rect_white_dsc);
@@ -321,6 +347,26 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_wpm_status, struct wpm_status_state, wpm_stat
                             wpm_status_get_state)
 ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
 
+static void set_vibe_coding_status(struct zmk_widget_status *widget,
+                                   struct vibe_coding_status_state state) {
+    widget->state.vibe_coding_status = state.status;
+    draw_top(widget->obj, widget->cbuf, &widget->state);
+}
+
+static void vibe_coding_status_update_cb(struct vibe_coding_status_state state) {
+    struct zmk_widget_status *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_vibe_coding_status(widget, state); }
+}
+
+static struct vibe_coding_status_state vibe_coding_status_get_state(const zmk_event_t *eh) {
+    const struct vibe_coding_status_event *ev = as_vibe_coding_status_event(eh);
+    return (struct vibe_coding_status_state){.status = (ev != NULL) ? ev->status : 0};
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(widget_vibe_coding_status, struct vibe_coding_status_state,
+                            vibe_coding_status_update_cb, vibe_coding_status_get_state)
+ZMK_SUBSCRIPTION(widget_vibe_coding_status, vibe_coding_status_event);
+
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
     lv_obj_set_size(widget->obj, 144, 72);
@@ -343,6 +389,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_output_status_init();
     widget_layer_status_init();
     widget_wpm_status_init();
+    widget_vibe_coding_status_init();
 
     return 0;
 }
