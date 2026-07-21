@@ -49,14 +49,10 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
-    lv_draw_label_dsc_t label_dsc_wpm;
-    init_label_dsc(&label_dsc_wpm, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_RIGHT);
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_rect_dsc_t rect_white_dsc;
     init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
-    lv_draw_line_dsc_t line_dsc;
-    init_line_dsc(&line_dsc, LVGL_FOREGROUND, 2);
 
     // Fill background
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
@@ -86,37 +82,71 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
     lv_canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
 
-    // Draw WPM
-    lv_canvas_draw_rect(canvas, 0, 21, 70, 44, &rect_white_dsc);
-    lv_canvas_draw_rect(canvas, 1, 22, 66, 42, &rect_black_dsc);
+    // Draw WPM segmented bar with 2px border and rounded corners
+    int bar_outer_x = 0;
+    int bar_outer_y = 21;
+    int bar_outer_w = 72;
+    int bar_outer_h = 18;
 
+    lv_draw_rect_dsc_t bar_dsc;
+    lv_draw_rect_dsc_init(&bar_dsc);
+    bar_dsc.bg_color = LVGL_FOREGROUND;
+    bar_dsc.bg_opa = LV_OPA_COVER;
+    bar_dsc.radius = 3;
+    lv_canvas_draw_rect(canvas, bar_outer_x, bar_outer_y, bar_outer_w, bar_outer_h, &bar_dsc);
+    lv_canvas_draw_rect(canvas, bar_outer_x + 2, bar_outer_y + 2, bar_outer_w - 4, bar_outer_h - 4, &rect_black_dsc);
+
+    // Inner bar area
+    int bar_x = bar_outer_x + 2;
+    int bar_y = bar_outer_y + 2;
+    int bar_w = bar_outer_w - 4;
+    int bar_h = bar_outer_h - 4;
+
+    // Badge dimensions (bottom-aligned with bar)
+    int badge_w = 20;
+    int badge_h = 11;
+    int badge_x = bar_outer_x + bar_outer_w - badge_w;
+    int badge_y = bar_outer_y + bar_outer_h - badge_h;
+
+    // Calculate filled segments based on WPM (0-84, 6 segments, each 14 WPM)
+    int wpm = state->wpm[9];
+    if (wpm > 84) {
+        wpm = 84;
+    }
+    int filled_segments = (wpm + 13) / 14;
+
+    // Draw 6 segments with 2px gaps and 2px side/top/bottom padding
+    int seg_w = 9;
+    int gap = 2;
+    int seg_pad_x = 2;
+    int seg_pad_y = 2;
+    for (int i = 0; i < 6; i++) {
+        int seg_x = bar_x + seg_pad_x + i * (seg_w + gap);
+        if (i < filled_segments) {
+            lv_canvas_draw_rect(canvas, seg_x, bar_y + seg_pad_y, seg_w, bar_h - seg_pad_y * 2, &rect_white_dsc);
+        }
+    }
+
+    // Draw separator lines (black, L-shape around badge top and left)
+    lv_canvas_draw_rect(canvas, badge_x, badge_y - 1, badge_w, 1, &rect_black_dsc);
+    lv_canvas_draw_rect(canvas, badge_x - 1, badge_y, 1, badge_h, &rect_black_dsc);
+
+    // Draw inverted badge on top (covers overlapping blocks)
+    lv_draw_rect_dsc_t badge_dsc;
+    lv_draw_rect_dsc_init(&badge_dsc);
+    badge_dsc.bg_color = LVGL_FOREGROUND;
+    badge_dsc.bg_opa = LV_OPA_COVER;
+    badge_dsc.radius = 2;
+    lv_canvas_draw_rect(canvas, badge_x, badge_y, badge_w, badge_h, &badge_dsc);
+
+    // Draw WPM number
     char wpm_text[6] = {};
     snprintf(wpm_text, sizeof(wpm_text), "%d", state->wpm[9]);
-    lv_canvas_draw_text(canvas, 42, 52, 24, &label_dsc_wpm, wpm_text);
 
-    int max = 0;
-    int min = 256;
+    lv_draw_label_dsc_t label_dsc_num;
+    init_label_dsc(&label_dsc_num, LVGL_BACKGROUND, &lv_font_montserrat_10, LV_TEXT_ALIGN_RIGHT);
 
-    for (int i = 0; i < 10; i++) {
-        if (state->wpm[i] > max) {
-            max = state->wpm[i];
-        }
-        if (state->wpm[i] < min) {
-            min = state->wpm[i];
-        }
-    }
-
-    int range = max - min;
-    if (range == 0) {
-        range = 1;
-    }
-
-    lv_point_t points[10];
-    for (int i = 0; i < 10; i++) {
-        points[i].x = 2 + i * 7;
-        points[i].y = 62 - (int)(((float)(state->wpm[i] - min) * 38.0f) / range + 0.5f);
-    }
-    lv_canvas_draw_line(canvas, points, 10, &line_dsc);
+    lv_canvas_draw_text(canvas, badge_x + 1, badge_y, badge_w - 2, &label_dsc_num, wpm_text);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
