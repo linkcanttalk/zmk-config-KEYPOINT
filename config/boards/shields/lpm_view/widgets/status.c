@@ -161,10 +161,11 @@ static void draw_profile_selector(lv_obj_t *canvas, const struct status_state *s
     int y_center = 46;
     int text_margin_bottom = 3;
     int font_height = 18;
+    int x_offset = -60; // Compensation for canvas position difference (middle=68, bottom=128)
 
     bool selected = profile_index == state->active_profile_index;
     int h = selected ? selected_h : normal_h;
-    int x = profile_index * box_w;
+    int x = profile_index * box_w + x_offset;
     int y = y_center - h / 2;
 
     lv_draw_rect_dsc_t rect_dsc;
@@ -198,13 +199,8 @@ static void draw_profile_selector(lv_obj_t *canvas, const struct status_state *s
 }
 
 static void draw_layer_info(lv_obj_t *canvas, const struct status_state *state) {
-    lv_draw_rect_dsc_t rect_black_dsc;
-    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
-
-    // Fill background
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
     // Draw layer
     if (state->layer_label == NULL) {
@@ -244,16 +240,21 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
-    // Draw profile selectors
-    for (int i = 0; i < 4; i++) {
-        draw_profile_selector(canvas, state, i);
-    }
-
     rotate_canvas(canvas, cbuf);
 }
 
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
+
+    lv_draw_rect_dsc_t rect_black_dsc;
+    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
+
+    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
+
+    // Draw profile selectors
+    for (int i = 0; i < 4; i++) {
+        draw_profile_selector(canvas, state, i);
+    }
 
     // Draw layer info
     draw_layer_info(canvas, state);
