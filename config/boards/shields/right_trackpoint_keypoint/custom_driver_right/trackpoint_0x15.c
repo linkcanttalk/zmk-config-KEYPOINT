@@ -20,6 +20,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/byteorder.h>
 #include <zmk/events/hid_indicators_changed.h>
+#include <zmk/events/activity_state_changed.h>
+#include <zmk/activity.h>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <zmk/hid.h>
 
@@ -85,6 +87,8 @@ static bool last_arrow_key_pressed = false;
 static bool remote_slow_key = false;
 static bool remote_arrow_key = false;
 uint32_t last_packet_time = 0;
+static float scroll_smooth_x = 0;
+static float scroll_smooth_y = 0;
 
 /* ========= special key position config ========= */
 static const uint8_t local_slow_positions[] = {20};
@@ -152,6 +156,22 @@ static int special_key_listener_cb(const zmk_event_t *eh) {
 }
 ZMK_LISTENER(trackpoint_special_key_listener, special_key_listener_cb);
 ZMK_SUBSCRIPTION(trackpoint_special_key_listener, zmk_position_state_changed);
+
+/* ========= Wake handler: reset stale state on wake from sleep ========= */
+static int trackpoint_activity_listener(const zmk_event_t *eh) {
+    const struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+    if (ev && ev->state == ZMK_ACTIVITY_ACTIVE) {
+        scroll_smooth_x = 0;
+        scroll_smooth_y = 0;
+        last_activity_time = k_uptime_get_32();
+        last_packet_time = k_uptime_get_32();
+        LOG_INF("TrackPoint: wake reset (scroll_smooth=0, timers reset)");
+    }
+    return ZMK_EV_EVENT_BUBBLE;
+}
+
+ZMK_LISTENER(trackpoint_activity_listener, trackpoint_activity_listener);
+ZMK_SUBSCRIPTION(trackpoint_activity_listener, zmk_activity_state_changed);
 
 struct trackpoint_config {
     struct i2c_dt_spec i2c;
@@ -353,8 +373,6 @@ static void trackpoint_work_cb(struct k_work *work) {
         float tx = MIN(abs_dx / 40.0f, 1.0f);
         float scale_x = 0.012f + 0.038f * tx * tx * tx;
 
-        static float scroll_smooth_x = 0;
-        static float scroll_smooth_y = 0;
         #define SCROLL_X_MAX 5
         #define SCROLL_Y_MAX 5
 
