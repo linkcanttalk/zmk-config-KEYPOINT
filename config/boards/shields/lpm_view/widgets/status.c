@@ -231,28 +231,15 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     rotate_canvas(canvas, cbuf);
 }
 
-static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
-    lv_obj_t *canvas = lv_obj_get_child(widget, 1);
-
-    lv_draw_rect_dsc_t rect_black_dsc;
-    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
-
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
-
-    rotate_canvas(canvas, cbuf);
-}
-
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
-    lv_obj_t *canvas = lv_obj_get_child(widget, 2);
+    lv_obj_t *canvas = lv_obj_get_child(widget, 1); // Changed from 2 to 1
 
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
-    // Draw profile selectors (adjusted for -90° rotation)
-    // After rotation: original (x, y) → screen (canvas_x + y, 71 - x)
-    // We want screen position to match original middle canvas position
+    // Draw profile selectors
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t label_dsc_black;
@@ -261,23 +248,15 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     int box_w = 18;
     int normal_h = 22;
     int selected_h = 24;
+    int y_center = 46;
     int text_margin_bottom = 3;
     int font_height = 18;
 
     for (int i = 0; i < 4; i++) {
         bool selected = i == state->active_profile_index;
         int h = selected ? selected_h : normal_h;
-
-        // Calculate screen position we want (same as original middle canvas)
-        int screen_x = 103; // 68 + 35 (original middle canvas x + y_center)
-        int screen_y = 71 - (i * box_w); // 71 - x_original
-
-        // Convert back to canvas coordinates for -90° rotation
-        // canvas_x = screen_y, canvas_y = 71 - screen_x + canvas_position_offset
-        int canvas_x = 71 - screen_y; // = i * box_w
-        int canvas_y = screen_x - 128; // = 103 - 128 = -25
-
-        int y = canvas_y - h / 2;
+        int x = i * box_w;
+        int y = y_center - h / 2;
 
         lv_draw_rect_dsc_t rect_dsc;
         lv_draw_rect_dsc_init(&rect_dsc);
@@ -286,7 +265,7 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
             rect_dsc.bg_color = LVGL_FOREGROUND;
             rect_dsc.bg_opa = LV_OPA_COVER;
             rect_dsc.radius = 4;
-            lv_canvas_draw_rect(canvas, canvas_x, y, box_w, h, &rect_dsc);
+            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
         } else {
             rect_dsc.bg_opa = LV_OPA_TRANSP;
             rect_dsc.border_color = LVGL_FOREGROUND;
@@ -299,13 +278,13 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
             } else {
                 rect_dsc.border_side = LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
             }
-            lv_canvas_draw_rect(canvas, canvas_x, y, box_w, h, &rect_dsc);
+            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
         }
 
         char label[2];
         snprintf(label, sizeof(label), "%d", i + 1);
         int text_y = y + h - text_margin_bottom - font_height;
-        lv_canvas_draw_text(canvas, canvas_x, text_y, box_w,
+        lv_canvas_draw_text(canvas, x, text_y, box_w,
                             (selected ? &label_dsc_black : &label_dsc), label);
     }
 
@@ -359,7 +338,7 @@ static void set_output_status(struct zmk_widget_status *widget,
     widget->state.active_profile_bonded = state->active_profile_bonded;
 
     draw_top(widget->obj, widget->cbuf, &widget->state);
-    draw_middle(widget->obj, widget->cbuf2, &widget->state);
+    draw_bottom(widget->obj, widget->cbuf3, &widget->state);
 }
 
 static void output_status_update_cb(struct output_status_state state) {
@@ -439,13 +418,9 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_obj_t *top = lv_canvas_create(widget->obj);
     lv_obj_align(top, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
-    // middle connecion status
-    lv_obj_t *middle = lv_canvas_create(widget->obj);
-    lv_obj_align(middle, LV_ALIGN_TOP_LEFT, 68, 0);
-    lv_canvas_set_buffer(middle, widget->cbuf2, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
-    // bottom layer status
+    // bottom profile selectors and layer status (moved from middle position)
     lv_obj_t *bottom = lv_canvas_create(widget->obj);
-    lv_obj_align(bottom, LV_ALIGN_TOP_LEFT, 128, 0);
+    lv_obj_align(bottom, LV_ALIGN_TOP_LEFT, 68, 0);
     lv_canvas_set_buffer(bottom, widget->cbuf3, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
 
     sys_slist_append(&widgets, &widget->node);
