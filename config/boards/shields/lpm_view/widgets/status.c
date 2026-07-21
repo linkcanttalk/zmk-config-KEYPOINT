@@ -197,19 +197,19 @@ static void draw_profile_selector(lv_obj_t *canvas, const struct status_state *s
                         (selected ? &label_dsc_black : &label_dsc), label);
 }
 
-static void draw_layer_info(lv_obj_t *canvas, const struct status_state *state) {
+static void draw_layer_info(lv_obj_t *canvas, const struct status_state *state, int y_offset) {
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
 
-    // Draw layer
+    // Draw layer at specified y position
     if (state->layer_label == NULL) {
         char text[10] = {};
 
         sprintf(text, "LAYER %i", state->layer_index);
 
-        lv_canvas_draw_text(canvas, 0, 0, 72, &label_dsc, text);
+        lv_canvas_draw_text(canvas, 0, y_offset, 72, &label_dsc, text);
     } else {
-        lv_canvas_draw_text(canvas, 0, 0, 72, &label_dsc, state->layer_label);
+        lv_canvas_draw_text(canvas, 0, y_offset, 72, &label_dsc, state->layer_label);
     }
 }
 
@@ -250,7 +250,7 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
-    // Draw profile selectors
+    // Draw profile selectors at top (y=0)
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t label_dsc_black;
@@ -259,7 +259,7 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     int box_w = 18;
     int normal_h = 22;
     int selected_h = 24;
-    int y_center = 46;
+    int profile_y = 0; // Profile selector at top
     int text_margin_bottom = 3;
     int font_height = 18;
 
@@ -267,7 +267,7 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         bool selected = i == state->active_profile_index;
         int h = selected ? selected_h : normal_h;
         int x = i * box_w;
-        int y = y_center - h / 2;
+        int y = profile_y;
 
         lv_draw_rect_dsc_t rect_dsc;
         lv_draw_rect_dsc_init(&rect_dsc);
@@ -299,8 +299,8 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
                             (selected ? &label_dsc_black : &label_dsc), label);
     }
 
-    // Draw layer info
-    draw_layer_info(canvas, state);
+    // Draw layer info below profile selector with 4px gap
+    draw_layer_info(canvas, state, selected_h + 4);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
