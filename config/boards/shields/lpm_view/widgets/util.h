@@ -26,7 +26,6 @@ struct status_state {
     uint8_t layer_index;
     const char *layer_label;
     uint8_t wpm[10];
-    uint8_t vibe_coding_status;
 #else
     bool connected;
 #endif
