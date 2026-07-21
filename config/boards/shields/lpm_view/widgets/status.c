@@ -161,12 +161,12 @@ static void draw_profile_selector(lv_obj_t *canvas, const struct status_state *s
     int y_center = 46;
     int text_margin_bottom = 3;
     int font_height = 18;
-    int x_offset = -60; // Compensation for canvas position difference (middle=68, bottom=128)
+    int y_offset = -60; // Compensation for canvas position difference after -90° rotation
 
     bool selected = profile_index == state->active_profile_index;
     int h = selected ? selected_h : normal_h;
-    int x = profile_index * box_w + x_offset;
-    int y = y_center - h / 2;
+    int x = profile_index * box_w;
+    int y = y_center - h / 2 + y_offset;
 
     lv_draw_rect_dsc_t rect_dsc;
     lv_draw_rect_dsc_init(&rect_dsc);
