@@ -44,23 +44,14 @@ struct wpm_status_state {
     uint8_t wpm;
 };
 
-static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
-    lv_obj_t *canvas = lv_obj_get_child(widget, 0);
+static void draw_battery_indicator(lv_obj_t *canvas, const struct status_state *state) {
+    draw_battery(canvas, state);
+}
 
+static void draw_connection_icon(lv_obj_t *canvas, const struct status_state *state) {
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
-    lv_draw_rect_dsc_t rect_black_dsc;
-    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
-    lv_draw_rect_dsc_t rect_white_dsc;
-    init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
 
-    // Fill background
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
-
-    // Draw battery
-    draw_battery(canvas, state);
-
-    // Draw output status
     char output_text[10] = {};
 
     switch (state->selected_endpoint.transport) {
@@ -81,6 +72,13 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     }
 
     lv_canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
+}
+
+static void draw_wpm_display(lv_obj_t *canvas, const struct status_state *state) {
+    lv_draw_rect_dsc_t rect_black_dsc;
+    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
+    lv_draw_rect_dsc_t rect_white_dsc;
+    init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
 
     // Draw WPM segmented bar with 2px border and rounded corners
     int bar_outer_x = 0;
@@ -147,22 +145,15 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     init_label_dsc(&label_dsc_num, LVGL_BACKGROUND, &lv_font_montserrat_10, LV_TEXT_ALIGN_RIGHT);
 
     lv_canvas_draw_text(canvas, badge_x + 1, badge_y, badge_w - 2, &label_dsc_num, wpm_text);
-
-    // Rotate canvas
-    rotate_canvas(canvas, cbuf);
 }
 
-static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
-    lv_obj_t *canvas = lv_obj_get_child(widget, 1);
-
+static void draw_profile_selector(lv_obj_t *canvas, const struct status_state *state, int profile_index) {
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t label_dsc_black;
     init_label_dsc(&label_dsc_black, LVGL_BACKGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
-
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
 
     int box_w = 18;
     int normal_h = 22;
@@ -171,48 +162,42 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     int text_margin_bottom = 3;
     int font_height = 18;
 
-    for (int i = 0; i < 4; i++) {
-        bool selected = i == state->active_profile_index;
-        int h = selected ? selected_h : normal_h;
-        int x = i * box_w;
-        int y = y_center - h / 2;
+    bool selected = profile_index == state->active_profile_index;
+    int h = selected ? selected_h : normal_h;
+    int x = profile_index * box_w;
+    int y = y_center - h / 2;
 
-        lv_draw_rect_dsc_t rect_dsc;
-        lv_draw_rect_dsc_init(&rect_dsc);
+    lv_draw_rect_dsc_t rect_dsc;
+    lv_draw_rect_dsc_init(&rect_dsc);
 
-        if (selected) {
-            rect_dsc.bg_color = LVGL_FOREGROUND;
-            rect_dsc.bg_opa = LV_OPA_COVER;
-            rect_dsc.radius = 4;
-            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
+    if (selected) {
+        rect_dsc.bg_color = LVGL_FOREGROUND;
+        rect_dsc.bg_opa = LV_OPA_COVER;
+        rect_dsc.radius = 4;
+        lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
+    } else {
+        rect_dsc.bg_opa = LV_OPA_TRANSP;
+        rect_dsc.border_color = LVGL_FOREGROUND;
+        rect_dsc.border_width = 2;
+        rect_dsc.radius = 3;
+        if (profile_index == 0) {
+            rect_dsc.border_side = LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
+        } else if (profile_index == 3) {
+            rect_dsc.border_side = LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
         } else {
-            rect_dsc.bg_opa = LV_OPA_TRANSP;
-            rect_dsc.border_color = LVGL_FOREGROUND;
-            rect_dsc.border_width = 2;
-            rect_dsc.radius = 3;
-            if (i == 0) {
-                rect_dsc.border_side = LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
-            } else if (i == 3) {
-                rect_dsc.border_side = LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
-            } else {
-                rect_dsc.border_side = LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
-            }
-            lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
+            rect_dsc.border_side = LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_BOTTOM;
         }
-
-        char label[2];
-        snprintf(label, sizeof(label), "%d", i + 1);
-        int text_y = y + h - text_margin_bottom - font_height;
-        lv_canvas_draw_text(canvas, x, text_y, box_w,
-                            (selected ? &label_dsc_black : &label_dsc), label);
+        lv_canvas_draw_rect(canvas, x, y, box_w, h, &rect_dsc);
     }
 
-    rotate_canvas(canvas, cbuf);
+    char label[2];
+    snprintf(label, sizeof(label), "%d", profile_index + 1);
+    int text_y = y + h - text_margin_bottom - font_height;
+    lv_canvas_draw_text(canvas, x, text_y, box_w,
+                        (selected ? &label_dsc_black : &label_dsc), label);
 }
 
-static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
-    lv_obj_t *canvas = lv_obj_get_child(widget, 2);
-
+static void draw_layer_info(lv_obj_t *canvas, const struct status_state *state) {
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_label_dsc_t label_dsc;
@@ -231,6 +216,47 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     } else {
         lv_canvas_draw_text(canvas, 0, 0, 72, &label_dsc, state->layer_label);
     }
+}
+
+static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
+    lv_obj_t *canvas = lv_obj_get_child(widget, 0);
+
+    lv_draw_rect_dsc_t rect_black_dsc;
+    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
+
+    // Fill background
+    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
+
+    // Draw components
+    draw_battery_indicator(canvas, state);
+    draw_connection_icon(canvas, state);
+    draw_wpm_display(canvas, state);
+
+    // Rotate canvas
+    rotate_canvas(canvas, cbuf);
+}
+
+static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
+    lv_obj_t *canvas = lv_obj_get_child(widget, 1);
+
+    lv_draw_rect_dsc_t rect_black_dsc;
+    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
+
+    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
+
+    // Draw profile selectors
+    for (int i = 0; i < 4; i++) {
+        draw_profile_selector(canvas, state, i);
+    }
+
+    rotate_canvas(canvas, cbuf);
+}
+
+static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
+    lv_obj_t *canvas = lv_obj_get_child(widget, 2);
+
+    // Draw layer info
+    draw_layer_info(canvas, state);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
