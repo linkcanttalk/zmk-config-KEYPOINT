@@ -102,7 +102,7 @@ layers:
   - {t: ENTER, h: RSHFT}
   - LCTRL
   - LEFT ALT
-  - '&td_tShft_0'
+  - '0'
   - BT CLR
   - {t: SPACE, h: LGUI}
   - {t: BACKSPACE, h: LGUI}
