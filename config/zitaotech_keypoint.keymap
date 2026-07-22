@@ -367,15 +367,6 @@
             #binding-cells = <2>;
             tapping-term-ms = <200>;
         };
-
-        td_tShft_0: td_tShft_0 {
-            compatible = "zmk,behavior-tap-dance";
-            label = "TD_TSHFT_0";
-            #binding-cells = <0>;
-            bindings = <&kp N0>, <&m_00>, <&kp RPAR>;
-
-            tapping-term-ms = <120>;
-        };
     };
 
     // ═══════════════════════════════════════════════════════════════
@@ -467,16 +458,9 @@
         m_mac_sleep: m_mac_sleep {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&kp LC(LG(Q))>, <&macro_wait_time 1000>, <&kp ESC>;
+            bindings = <&kp LC(LG(Q))>, <&macro_wait_time 5000>, <&kp ESC>;
 
             label = "M_MAC_SLEEP";
-        };
-
-        m_00: m_00 {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&kp N0 &kp N0>;
-            label = "M_00";
         };
     };
 
@@ -511,7 +495,7 @@
 &kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5         &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9        &td_dShft_0      &kp DEL
 &kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none               &none        &none        &kp KP_PLUS         &kp KP_MINUS       &kp LPAR         &kp RPAR       &td_dShft_sqt   &mt RSHIFT ENTER
 &kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none               &none        &none        &none               &none              &kp KP_MULTIPLY  &kp KP_DIVIDE  &td_dShft_lbkt  &td_dShft_rbkt    &td_dShft_bslh  &mt RSHFT ENTER
-&kp LCTRL  &kp LEFT_ALT  &td_tShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI BACKSPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI KP_EQUAL  &out OUT_TOG     &kp RS(RGUI)   &kp LEFT        &kp RIGHT
+&kp LCTRL  &kp LEFT_ALT  &kp N0       &bt BT_CLR   &mt LGUI SPACE  &mt LGUI BACKSPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI KP_EQUAL  &out OUT_TOG     &kp RS(RGUI)   &kp LEFT        &kp RIGHT
             >;
 
             // 传感器绑定：BLE编码器切换蓝牙设备，旋转上下选择
