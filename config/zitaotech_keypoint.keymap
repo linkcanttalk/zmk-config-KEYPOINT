@@ -367,6 +367,15 @@
             #binding-cells = <2>;
             tapping-term-ms = <200>;
         };
+
+        td_tShft_0: td_tShft_0 {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TD_TSHFT_0";
+            #binding-cells = <0>;
+            bindings = <&kp N0>, <&m_00>, <&kp RPAR>;
+
+            tapping-term-ms = <120>;
+        };
     };
 
     // ═══════════════════════════════════════════════════════════════
@@ -454,6 +463,23 @@
     // 键位图 (KEYMAP)
     // ═══════════════════════════════════════════════════════════════
 
+    macros {
+        m_mac_sleep: m_mac_sleep {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(LG(Q))>, <&macro_wait_time 1000>, <&kp ESC>;
+
+            label = "M_MAC_SLEEP";
+        };
+
+        m_00: m_00 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp N0 &kp N0>;
+            label = "M_00";
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -464,10 +490,10 @@
         default_layer {
             display-name = "QWERTY";
             bindings = <
-&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I        &kp O           &kp P    &kp BSPC
-&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &kt GLOBE  &none             &kp H        &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
-&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &kp GLOBE    &kt GLOBE       &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
-&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE  &mt LGUI SPACE  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
+&mt ESC TAB      &kp Q          &kp W  &kp E     &kp R           &kp T           &kp Y      &kp U             &kp I               &kp O           &kp P    &kp BSPC
+&kp CAPS         &kp A          &kp S  &kp D     &kp F           &kp G           &kt GLOBE  &none             &kp H               &kp J           &kp K    &kp L           &td_semi_dquotes  &mt RSHFT ENTER
+&kp LSHFT        &kp Z          &kp X  &kp C     &kp V           &kp B           &kp PG_DN  &kp PG_UP         &mt GLOBE CAPSLOCK  &kt GLOBE       &kp N    &kp M           &td_comma_lbrc    &kp DOT          &td_fslh_up  &mt RSHFT ENTER
+&td_lcrtl_globe  &td_lalt_ralt  &mo 2  &kp HOME  &mt LGUI SPACE  &mt LGUI SPACE  &lt 1 ESC  &ht_mo_mkp 2 MB1  &lt 1 SPACE         &mt LGUI SPACE  &kp END  &td_grave_left  &td_minus_down    &td_equal_right
             >;
 
             // 传感器绑定：旋转编码器上下/左右
@@ -485,7 +511,7 @@
 &kp ESC    &td_dShft_1   &td_dShft_2  &td_dShft_3  &td_dShft_4     &td_dShft_5         &td_dShft_6  &td_dShft_7  &td_dShft_8         &td_dShft_9        &td_dShft_0      &kp DEL
 &kp CAPS   &td_dShft_4   &td_dShft_5  &td_dShft_6  &none           &none               &none        &none        &kp KP_PLUS         &kp KP_MINUS       &kp LPAR         &kp RPAR       &td_dShft_sqt   &mt RSHIFT ENTER
 &kp LSHFT  &td_dShft_7   &td_dShft_8  &td_dShft_9  &none           &none               &none        &none        &none               &none              &kp KP_MULTIPLY  &kp KP_DIVIDE  &td_dShft_lbkt  &td_dShft_rbkt    &td_dShft_bslh  &mt RSHFT ENTER
-&kp LCTRL  &kp LEFT_ALT  &td_dShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI BACKSPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI KP_EQUAL  &out OUT_TOG     &kp RS(RGUI)   &kp LEFT        &kp RIGHT
+&kp LCTRL  &kp LEFT_ALT  &td_tShft_0  &bt BT_CLR   &mt LGUI SPACE  &mt LGUI BACKSPACE  &kp ENTER    &kp ENTER    &mt RGUI BACKSPACE  &mt RGUI KP_EQUAL  &out OUT_TOG     &kp RS(RGUI)   &kp LEFT        &kp RIGHT
             >;
 
             // 传感器绑定：BLE编码器切换蓝牙设备，旋转上下选择
@@ -500,10 +526,10 @@
         FUNCTION_layer {
             display-name = "FUNC";
             bindings = <
-&kp ESC    &kp F1        &mt F2 UP  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10        &kp BACKSPACE
-&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none          &none          &none         &mt RSHFT ENTER
-&kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &bl BL_DEC              &bl BL_INC         &kp LC(UP)     &none          &kp LG(LBKT)  &kp LG(RBKT)     &kp UP  &mt RSHFT ENTER
-&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &kp ESCAPE       &kp RGUI                &kp RGUI           &kp LC(LG(Q))  &kp LEFT       &kp DOWN      &kp RIGHT
+&kp ESC    &kp F1        &mt F2 UP  &kp F3      &kp F4          &kp F5          &kp F6          &kp F7           &kp F8                  &kp F9             &kp F10       &kp BACKSPACE
+&kp CAPS   &kp LEFT      &kp DOWN   &kp RIGHT   &none           &none           &none           &none            &mt F11 LC(LEFT_ARROW)  &mt F12 LC(RIGHT)  &none         &none          &none         &mt RSHFT ENTER
+&kp LSHFT  &none         &none      &none       &none           &none           &rgb_ug RGB_ON  &rgb_ug RGB_OFF  &bl BL_DEC              &bl BL_INC         &kp LC(UP)    &none          &kp LG(LBKT)  &kp LG(RBKT)     &kp UP  &mt RSHFT ENTER
+&kp LCTRL  &kp LEFT_ALT  &none      &kp C_MUTE  &mt LGUI SPACE  &mt LGUI SPACE  &kp ESC         &kp ESCAPE       &kp RGUI                &kp RGUI           &m_mac_sleep  &kp LEFT       &kp DOWN      &kp RIGHT
             >;
 
             // 传感器绑定：旋转调节音量和亮度
