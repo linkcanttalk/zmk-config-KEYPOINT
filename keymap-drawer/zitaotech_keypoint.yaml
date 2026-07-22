@@ -35,7 +35,7 @@ layers:
   - B
   - PG DN
   - PG UP
-  - GLOBE
+  - {t: CAPSLOCK, h: GLOBE}
   - {t: GLOBE, h: toggle}
   - N
   - M
@@ -102,7 +102,7 @@ layers:
   - {t: ENTER, h: RSHFT}
   - LCTRL
   - LEFT ALT
-  - '&td_dShft_0'
+  - '&td_tShft_0'
   - BT CLR
   - {t: SPACE, h: LGUI}
   - {t: BACKSPACE, h: LGUI}
@@ -167,7 +167,7 @@ layers:
   - ESCAPE
   - RGUI
   - RGUI
-  - Ctl+Gui+Q
+  - '&m_mac_sleep'
   - LEFT
   - DOWN
   - RIGHT
